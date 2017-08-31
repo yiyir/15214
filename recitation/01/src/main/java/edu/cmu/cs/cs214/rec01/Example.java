@@ -17,8 +17,13 @@ public final class Example {
 	 *            size of the <code>ArrayList</code> to create and print
 	 */
 	public void printList(int size) {
-		ArrayList<Integer> integerList;
-		// TODO: IMPLEMENT ME
+		ArrayList<Integer> integerList = new ArrayList<>();
+		for (int i = 1; i <= size; i++) {
+		  integerList.add(i);
+		}
+		for (int i: integerList) {
+		System.out.print(i+" ");
+		}
 	}
 
 }
