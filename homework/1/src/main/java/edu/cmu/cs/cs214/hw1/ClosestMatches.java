@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-
 /**
  * 15-214 HW1 Andrew ID: yiyir
  * 
@@ -68,13 +67,13 @@ public final class ClosestMatches {
     }
 
     /**
-     * Private nested class to implement the Comparator interface and define a
-     * PairComparator.
+     * Private static Fnested class to implement the Comparator interface and
+     * define a PairComparator.
      * 
      * @author Yiyi Ren
      *
      */
-    private class PairComparator implements Comparator<Pair> {
+    private static class PairComparator implements Comparator<Pair> {
 
         @Override
         /**
