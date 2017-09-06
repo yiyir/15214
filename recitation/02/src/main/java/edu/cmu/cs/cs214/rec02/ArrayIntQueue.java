@@ -15,7 +15,7 @@ public class ArrayIntQueue implements IntQueue {
     /**
      * An array holding this queue's data
      */
-    private int elementData[];
+    //private int elementData[];
 
     /**
      * Index of the next dequeue-able value
