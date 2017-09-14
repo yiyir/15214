@@ -12,4 +12,5 @@ package edu.cmu.cs.cs214.hw2.operator;
 	 */
 	@Override
 	String toString();
+
 }

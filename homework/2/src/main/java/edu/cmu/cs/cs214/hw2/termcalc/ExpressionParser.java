@@ -7,14 +7,14 @@ import java.util.Objects;
 /**
  * ExpressionParser - parses String expressions and returns an Expression.
  * 
- *         Constraints: Supports custom configured operator precedence.
+ * Constraints: Supports custom configured operator precedence.
  *
- *         Use: The termcalc expects standard symbols for sum, subtraction, multiplication,
- *         division, exponentiation, and negation (represented also as '-'). To execute the
- *         absolute value enter: 'abs' followed by its argument.
+ * Use: The termcalc expects standard symbols for sum, subtraction,
+ * multiplication, division, exponentiation, and negation (represented also as
+ * '-'). To execute the absolute value enter: 'abs' followed by its argument.
  */
 final class ExpressionParser {
-    //CHECKSTYLE:OFF
+    // CHECKSTYLE:OFF
     private final ExpressionMaker maker;
 
     ExpressionParser(ExpressionMaker maker) {
@@ -25,8 +25,10 @@ final class ExpressionParser {
      * Receives a properly formatted expression in String form and parses it
      * using an ExpressionMaker to return a composed Expression object.
      *
-     * @param str the string representation of an expression
-     * @return an expression that encompasses the expression contained within the parameter
+     * @param str
+     *            the string representation of an expression
+     * @return an expression that encompasses the expression contained within
+     *         the parameter
      */
     Expression eval(final String str) {
         return new Object() {
@@ -37,7 +39,8 @@ final class ExpressionParser {
             }
 
             boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
+                while (ch == ' ')
+                    nextChar();
                 if (ch == charToEat) {
                     nextChar();
                     return true;
@@ -48,7 +51,8 @@ final class ExpressionParser {
             Expression parse() {
                 nextChar();
                 Expression x = parseExpression();
-                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
+                if (pos < str.length())
+                    throw new RuntimeException("Unexpected: " + (char) ch);
                 return x;
             }
 
@@ -56,15 +60,14 @@ final class ExpressionParser {
             // expression = term | expression `+` term | expression `-` term
             // term = factor | term `*` factor | term `/` factor
             // factor = `+` factor | `-` factor | `(` expression `)`
-            //        | number | abs factor | factor `^` factor
+            // | number | abs factor | factor `^` factor
 
             Expression parseExpression() {
                 Expression x = parseTerm();
-                while(true) {
+                while (true) {
                     if (eat('+')) {
                         x = maker.sumExpression(x, parseTerm()); // addition
-                    }
-                    else if (eat('-')) {
+                    } else if (eat('-')) {
                         x = maker.differenceExpression(x, parseTerm()); // subtraction
                     } else {
                         return x;
@@ -74,22 +77,23 @@ final class ExpressionParser {
 
             Expression parseTerm() {
                 Expression x = parseFactor();
-                while(true) {
+                while (true) {
                     if (eat('*')) {
                         x = maker.productExpression(x, parseFactor()); // multiplication
-                    }
-                    else if (eat('/')) {
+                    } else if (eat('/')) {
                         x = maker.divisionExpression(x, parseFactor()); // division
-                    }
-                    else {
+                    } else {
                         return x;
                     }
                 }
             }
 
             Expression parseFactor() {
-                if (eat('+')) return parseFactor(); // unary plus
-                if (eat('-')) return maker.negationExpression(parseFactor()); // unary minus
+                if (eat('+'))
+                    return parseFactor(); // unary plus
+                if (eat('-'))
+                    return maker.negationExpression(parseFactor()); // unary
+                                                                    // minus
 
                 Expression x;
                 int startPos = this.pos;
@@ -97,19 +101,24 @@ final class ExpressionParser {
                     x = parseExpression();
                     eat(')');
                 } else if (isNumeric()) { // numbers
-                    while (isNumeric()) nextChar();
+                    while (isNumeric())
+                        nextChar();
                     x = maker.numberExpression(Double.parseDouble(str.substring(startPos, this.pos)));
                 } else if (Character.isAlphabetic(ch)) { // functions
-                    while (Character.isAlphabetic(ch)) nextChar();
+                    while (Character.isAlphabetic(ch))
+                        nextChar();
                     String func = str.substring(startPos, this.pos);
                     x = parseFactor();
-                    if (func.equals("abs")) x = maker.absoluteValueExpression(x);
-                    else throw new RuntimeException("Unknown function: " + func);
+                    if (func.equals("abs"))
+                        x = maker.absoluteValueExpression(x);
+                    else
+                        throw new RuntimeException("Unknown function: " + func);
                 } else {
-                    throw new RuntimeException("Unexpected character: '" + (char)ch + "'");
+                    throw new RuntimeException("Unexpected character: '" + (char) ch + "'");
                 }
 
-                if (eat('^')) x = maker.exponentiationExpression(x, parseFactor()); // exponentiation
+                if (eat('^'))
+                    x = maker.exponentiationExpression(x, parseFactor()); // exponentiation
 
                 return x;
             }

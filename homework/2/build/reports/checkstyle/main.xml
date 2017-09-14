@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="6.7">
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/AbsoluteExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/AdditionExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/DerivativeExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+<error line="14" column="33" severity="error" message="Name &apos;delta&apos; must match pattern &apos;^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/DivisionExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/ExponentiationExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/Expression.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/MultiplicationExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/NegationExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/NumberExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/SubtractionExpression.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/expression/VariableExpression.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/guicalc/CalculatorController.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/guicalc/GuiCalculator.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/guicalc/Main.java">
+<error line="27" severity="error" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
+<error line="33" severity="error" message="Comment matches to-do format &apos;TODO:&apos;." source="com.puppycrawl.tools.checkstyle.checks.TodoCommentCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/AbsoluteOperator.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/AdditionOperator.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/BinaryOperator.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/DivisionOperator.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/ExponentiationOperator.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/MultiplicationOperator.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/NegationOperator.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/Operator.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/SubtractionOperator.java">
+<error line="3" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/operator/UnaryOperator.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/termcalc/ExpressionMaker.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/termcalc/ExpressionParser.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/termcalc/Main.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/termcalc/MyExpressionMaker.java">
+<error line="13" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/termcalc/TerminalCalculator.java">
+</file>
+<file name="/Users/apple/Documents/yiyir15214/yiyir/homework/2/src/main/java/edu/cmu/cs/cs214/hw2/zerofinder/ZeroFinder.java">
+</file>
+</checkstyle>

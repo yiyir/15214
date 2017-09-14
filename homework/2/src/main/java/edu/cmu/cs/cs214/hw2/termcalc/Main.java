@@ -8,11 +8,11 @@ import java.util.Scanner;
  */
 public class Main {
     /**
-     * @param args program arguments
+     * @param args
+     *            program arguments
      */
     public static void main(String[] args) {
-        //TODO: Replace null with an instance of your own ExpressionMaker
-        ExpressionMaker expressionMaker = null;
+        ExpressionMaker expressionMaker = new MyExpressionMaker();
         TerminalCalculator calculator = new TerminalCalculator(expressionMaker);
 
         try (Scanner scanner = new Scanner(System.in)) {
@@ -23,9 +23,9 @@ public class Main {
                     Expression exp = calculator.run(expression);
                     System.out.printf("Result: %s%n", exp.eval());
                 } catch (Exception e) {
-                    System.out.println("Input format not accepted. Please try again." );
+                    System.out.println("Input format not accepted. Please try again.");
                 }
-            } while(true);
+            } while (true);
         }
     }
 }

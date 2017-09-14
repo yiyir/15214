@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="edu.cmu.cs.cs214.hw2.expression.AdditionExpressionTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2017-09-14T01:55:01" hostname="applematoMacBook-Air.local" time="0.005">
+  <properties/>
+  <testcase name="testToString" classname="edu.cmu.cs.cs214.hw2.expression.AdditionExpressionTest" time="0.003"/>
+  <testcase name="test" classname="edu.cmu.cs.cs214.hw2.expression.AdditionExpressionTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
