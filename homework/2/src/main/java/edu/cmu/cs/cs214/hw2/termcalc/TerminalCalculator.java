@@ -9,7 +9,7 @@ public class TerminalCalculator {
     //CHECKSTYLE:OFF
     private final ExpressionParser parser;
 
-    TerminalCalculator(ExpressionMaker maker) {
+    public TerminalCalculator(ExpressionMaker maker) {
         Objects.requireNonNull(maker);
         parser = new ExpressionParser(maker);
     }

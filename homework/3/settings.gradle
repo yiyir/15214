@@ -1,0 +1,2 @@
+include ":hw2"
+project(":hw2").projectDir = new File(settingsDir, "../2")

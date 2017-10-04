@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="edu.cmu.cs.cs214.hw2.expression.DerivativeExpressionTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2017-09-14T01:55:01" hostname="applematoMacBook-Air.local" time="0.035">
+<testsuite name="edu.cmu.cs.cs214.hw2.expression.DerivativeExpressionTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2017-09-22T22:05:30" hostname="Yiyis-MacBook-Pro.local" time="0.003">
   <properties/>
-  <testcase name="test" classname="edu.cmu.cs.cs214.hw2.expression.DerivativeExpressionTest" time="0.035"/>
+  <testcase name="test" classname="edu.cmu.cs.cs214.hw2.expression.DerivativeExpressionTest" time="0.003"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

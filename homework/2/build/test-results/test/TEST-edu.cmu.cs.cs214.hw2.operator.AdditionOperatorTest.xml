@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="edu.cmu.cs.cs214.hw2.operator.AdditionOperatorTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2017-09-14T01:55:01" hostname="applematoMacBook-Air.local" time="0.001">
+<testsuite name="edu.cmu.cs.cs214.hw2.operator.AdditionOperatorTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2017-09-22T22:05:30" hostname="Yiyis-MacBook-Pro.local" time="0.0">
   <properties/>
   <testcase name="testApply" classname="edu.cmu.cs.cs214.hw2.operator.AdditionOperatorTest" time="0.0"/>
   <testcase name="testToString" classname="edu.cmu.cs.cs214.hw2.operator.AdditionOperatorTest" time="0.0"/>
