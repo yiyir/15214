@@ -1,0 +1,1 @@
+My-own-tile(“Skip”): The turn ends as usual, but after this tile is activated the player loses his/her next turn.
