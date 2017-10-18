@@ -10,7 +10,22 @@ import java.util.*;
  * Each game has 2-4 players, a bag of letter tiles, a dictionary, a game board and several special tiles.
  */
 public class GameSystem {
-
+    /**
+     * the bag of letter tiles used in the game
+     */
+    private final TileBag tileBag;
+    /**
+     * the game board used in the game
+     */
+    private final GameBoard gameBoard;
+    /**
+     * the players of the game
+     */
+    private final Deque<Player> players;
+    /**
+     * the dictionary used in the game
+     */
+    private Dictionary dictionary;
     /**
      * the current player
      */
@@ -19,18 +34,6 @@ public class GameSystem {
      * the current play/move
      */
     private Map<Integer, LetterTile> currentMove;
-    /**
-     * the bag of letter tiles used in the game
-     */
-    private TileBag tileBag;
-    /**
-     * the dictionary used in the game
-     */
-    private Dictionary dictionary;
-    /**
-     * the players of the game
-     */
-    private Deque<Player> players;
     /**
      * whether the players should play in the reverse of the previous order
      */
@@ -47,6 +50,7 @@ public class GameSystem {
         } finally {
             tileBag = new TileBag();
             players = new LinkedList<>();
+            gameBoard = new GameBoard();
         }
     }
 
@@ -109,15 +113,17 @@ public class GameSystem {
     }
 
     /**
-     * Plays the special tile on the game board.
+     * Plays the special tile on the specified square of the game board.
      *
-     * @param specialTile the special tile to be played
-     * @return whether the operation succeeds or not
+     * @param i    the index of the square on the game board on which the special tile is to be placed
+     * @param tile the special tile to be played
+     * @return true if the operation succeeds, false if the player doesn't have the special tile
      */
-    public boolean playSpecialTile(Integer n, SpecialTile specialTile) {
-
-        return false;
+    public boolean playSpecialTile(Integer i, SpecialTile tile) {
+        if (!currentPlayer.removeSpecialTile(tile)) return false;
+        return gameBoard.placeSpecialTile(i, tile);
     }
+
 
     public boolean playLetterTiles(Map<Integer, LetterTile> letterTiles) {
         return false;

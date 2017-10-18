@@ -189,23 +189,18 @@ public class Player {
     /**
      * Removes the given special tile from the player's tile inventory.
      *
-     * @param tiles the given special tiles to be removed from the player's tile inventory
-     * @return true if the player has the given special tiles and the tiles are removed successfully from the player's tile inventory;
-     * false if the player doesn't have all the given tiles
+     * @param tile the given special tile to be removed from the player's tile inventory
+     * @return true if the player has the given special tile and the tile is removed successfully from the player's tile inventory;
+     * false if the player doesn't have the given tile
      */
-    public boolean removeSpecialTile(Map<Integer, SpecialTile> tiles) {
-        for (SpecialTile tile : tiles.values()) {
-            if (!tileInventory.containsKey(tile)) {
-                return false;
-            } else {
-                Integer oldValue = tileInventory.get(tile);
-                if (oldValue == 1) {
-                    tileInventory.remove(tile);
-                } else {
-                    tileInventory.put(tile, oldValue - 1);
-                }
-
-            }
+    public boolean removeSpecialTile(SpecialTile tile) {
+        Integer num = tileInventory.get(tile);
+        if (num == null) {
+            return false;
+        } else if (num == 1) {
+            tileInventory.remove(tile);
+        } else {
+            tileInventory.put(tile, num - 1);
         }
         return true;
     }
