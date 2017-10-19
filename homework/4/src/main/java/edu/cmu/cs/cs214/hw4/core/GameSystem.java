@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+
 /**
  * This class represents the game system of the game Scrabble.
  * Each game has 2-4 players, a bag of letter tiles, a dictionary, a game board and several special tiles.
@@ -93,14 +94,28 @@ public class GameSystem {
     }
 
     /**
-     * Starts a new turn according to the game order.
+     * Updates the score and starts a new turn according to the game order.
      *
-     * @return true if there are no less than 2 players in the game and a new turn is started successfully
+     * @return whether the operation succeeds or not
      */
     public boolean startNewTurn() {
         if (players.size() < 2) {
             return false;
         }
+
+//        if (currentPlayer != null) {
+//            for(Integer i : currentMove.keySet()){
+//                Square square = gameBoard.getGameBoard().get(i);
+//                List<SpecialTile> specialTiles = square.getSpecialTiles();
+//                if(specialTiles!=null){
+//                    for(SpecialTile tile: specialTiles){
+//                        tile.activateFunc(gameBoard,this);
+//                    }
+//                }
+//            }
+//            int score = gameBoard.calculateScore(currentMove);
+//            currentPlayer.addScore(score);
+//        }
         if (!isReverseOrder) {
             if (currentPlayer != null) players.offerLast(currentPlayer);
             currentPlayer = players.pollFirst();
@@ -108,6 +123,7 @@ public class GameSystem {
             if (currentPlayer != null) players.offerFirst(currentPlayer);
             currentPlayer = players.pollLast();
         }
+        currentMove = null;
         currentPlayer.updateRack(tileBag);
         return true;
     }
@@ -124,13 +140,45 @@ public class GameSystem {
         return gameBoard.placeSpecialTile(i, tile);
     }
 
-
+    /**
+     * Plays the letter tiles on the specified squares.
+     *
+     * @param letterTiles the letter tiles to be played
+     * @return whether the operation succeeds or not
+     */
     public boolean playLetterTiles(Map<Integer, LetterTile> letterTiles) {
-        return false;
+        if (!gameBoard.isValidLetterTilePlacement(letterTiles)) return false;
+        if (!currentPlayer.removeLetterTiles(letterTiles)) return false;
+        gameBoard.placeLetterTiles(letterTiles);
+        currentMove = letterTiles;
+        return true;
     }
 
+    /**
+     * Challenges the current move. This happens before calculating the score for the current play.
+     *
+     * @param challenger the player who issues the challenge
+     */
     public void challenge(Player challenger) {
-
+        List<String> result = new ArrayList<>();
+        List<List<Integer>> words = gameBoard.getWords(currentMove);
+        for (List<Integer> word : words) {
+            Integer[] array = (Integer[]) word.toArray();
+            Arrays.sort(array);
+            StringBuilder sb = new StringBuilder();
+            for (Integer i : array) {
+                Square square = gameBoard.getGameBoard().get(i);
+                sb.append(square.getLetterTile().getLetter());
+            }
+            result.add(sb.toString());
+        }
+        if (dictionary.contains(result)) {
+            challenger.setSkipTurn();
+        } else {
+            gameBoard.removeTiles(currentMove);
+            currentPlayer.addLetterTiles(currentMove);
+            startNewTurn();
+        }
     }
 
     /**
@@ -169,6 +217,7 @@ public class GameSystem {
         currentPlayer.removeLetterTiles(tiles);
         currentPlayer.updateRack(tileBag);
         tileBag.getTileBag().addAll(tiles);
+        startNewTurn();
         return true;
     }
 

@@ -97,7 +97,7 @@ public class Player {
      *
      * @param points the points to be added to the player's score
      */
-    public void AddScore(int points) {
+    public void addScore(int points) {
         this.score += points;
     }
 

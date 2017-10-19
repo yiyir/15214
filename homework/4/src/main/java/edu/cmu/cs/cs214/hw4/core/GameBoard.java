@@ -1,8 +1,6 @@
 package edu.cmu.cs.cs214.hw4.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the game board of the game Scrabble.
@@ -52,8 +50,16 @@ public class GameBoard {
         return gameBoard;
     }
 
-    public boolean placeLetterTiles(Map<Integer, LetterTile> move) {
-return false;
+    /**
+     * Places the letter tiles on the specified squares.
+     *
+     * @param move the move of play
+     */
+    public void placeLetterTiles(Map<Integer, LetterTile> move) {
+        for (Integer i : move.keySet()) {
+            Square square = gameBoard.get(i);
+            square.setLetterTile(move.get(i));
+        }
     }
 
     /**
@@ -69,19 +75,181 @@ return false;
 
     }
 
-    public List<String> getWords(Map<Integer, LetterTile> move) {
-return null;
+    /**
+     * Gets all the words made in the play.
+     *
+     * @param move the move of play
+     * @return all the words made in the play
+     */
+    public List<List<Integer>> getWords(Map<Integer, LetterTile> move) {
+        List<List<Integer>> result = new ArrayList<>();
+        // get any one index of the placement of the move
+        Integer[] array = (Integer[]) move.keySet().toArray();
+        Integer index = array[0];
+        //check if the move is in a row or column
+        Set<Integer> col = new HashSet<>();
+        Set<Integer> row = new HashSet<>();
+        for (Integer i : move.keySet()) {
+            int rowIndex = i / 15;
+            int colIndex = i % 15;
+            row.add(rowIndex);
+            col.add(colIndex);
+        }
+        if (row.size() == 1) {
+            result.add(getHorizontalWord(index));
+            for (Integer i : move.keySet()) {
+                result.add(getVerticalWord(i));
+            }
+        } else {
+            result.add(getVerticalWord(index));
+            for (Integer i : move.keySet()) {
+                result.add(getHorizontalWord(i));
+            }
+        }
+        return result;
     }
 
-    public void calculateScore(Map<Integer, LetterTile> move) {
+    /**
+     * Gets the vertical word given the index of one letter in the word.
+     *
+     * @param n the index of one letter in the word
+     * @return the indices of the letters in the vertical word
+     */
+    private List<Integer> getVerticalWord(Integer n) {
+        Integer upIndex = n;
+        Integer downIndex = upIndex;
+        while ((upIndex / 15 > 0) && gameBoard.get(upIndex - 15).getLetterTile() != null) {
+            upIndex -= 15;
+        }
+        while ((downIndex / 15 < 14) && gameBoard.get(downIndex + 1).getLetterTile() != null) {
+            downIndex += 15;
+        }
+        List<Integer> result = new ArrayList<>();
+        for (int i = upIndex; i <= downIndex; i += 15) {
+            result.add(i);
+        }
+        return result;
 
     }
 
+    /**
+     * Gets the horizontal word given the index of one letter in the word.
+     *
+     * @param n the index of one letter in the word
+     * @return the indices of the letters in the horizontal word
+     */
+    private List<Integer> getHorizontalWord(Integer n) {
+        Integer leftIndex = n;
+        Integer rightIndex = leftIndex;
+        while ((leftIndex % 15 > 0) && gameBoard.get(leftIndex - 1).getLetterTile() != null) {
+            leftIndex--;
+        }
+        while ((rightIndex % 15 < 14) && gameBoard.get(rightIndex + 1).getLetterTile() != null) {
+            rightIndex++;
+        }
+        List<Integer> result = new ArrayList<>();
+        for (int i = leftIndex; i <= rightIndex; i++) {
+            result.add(i);
+        }
+        return result;
+    }
+
+    /**
+     * Calculates the total score of the given move.
+     *
+     * @param move the given move
+     * @return the total score of the given move
+     */
+    public int calculateScore(Map<Integer, LetterTile> move) {
+        List<List<Integer>> words = getWords(move);
+        int totalScore = 0;
+        for (List<Integer> word : words) {
+            int multiplier = 1;
+            int wordScore = 0;
+            for (Integer i : word) {
+                Square square = gameBoard.get(i);
+                if (move.keySet().contains(i)) {
+                    if (square.isForWord()) {
+                        multiplier *= square.getMultiplier();
+                    } else {
+                        wordScore += square.getLetterTile().getPointValue() * square.getMultiplier();
+                    }
+                }
+
+            }
+            totalScore += wordScore * multiplier;
+        }
+        return totalScore;
+    }
+
+    /**
+     * Checks if the placement is valid or not(i.e. all letters are in a single row/col;
+     * all tiles are on empty squares; at least one letter tile is placed next to
+     * a pre-existing letter tile on the board)
+     *
+     * @param move the move of play
+     * @return whether the placement is valid or not
+     */
     public boolean isValidLetterTilePlacement(Map<Integer, LetterTile> move) {
-        return false;
+        boolean hasTouched = false;
+        Set<Integer> col = new HashSet<>();
+        Set<Integer> row = new HashSet<>();
+        for (Integer i : move.keySet()) {
+            Square square = gameBoard.get(i);
+            //check if the square is empty or not
+            if (square.getLetterTile() != null) return false;
+            //get the row and col indices of the square
+            int rowIndex = i / 15;
+            int colIndex = i % 15;
+            row.add(rowIndex);
+            col.add(colIndex);
+            List<Integer> nei = new ArrayList<>();
+            if (rowIndex > 0) {
+                nei.add(i - 15);
+            }
+            if (rowIndex < 14) {
+                nei.add(i + 15);
+            }
+            if (colIndex > 0) {
+                nei.add(i - 1);
+            }
+            if (colIndex < 14) {
+                nei.add(i + 1);
+            }
+            for (Integer n : nei) {
+                if (gameBoard.get(n).getLetterTile() != null) hasTouched = true;
+            }
+        }
+        //check if any pre-existing letter tile has been touched
+        if (!hasTouched) return false;
+        // check if all letter tiles are placed on the same col/row
+        if (row.size() != 1 && col.size() != 1) return false;
+        // check if there are gaps between the letters
+        if (row.size() == 1) {
+            Integer[] array = (Integer[]) move.keySet().toArray();
+            Arrays.sort(array);
+            for (int i = array[0] + 1; i < array[array.length - 1]; i++) {
+                if (gameBoard.get(i).getLetterTile() == null && !move.keySet().contains(i)) return false;
+            }
+        } else {
+            Integer[] array = (Integer[]) move.keySet().toArray();
+            Arrays.sort(array);
+            for (int i = array[0] + 15; i < array[array.length - 1]; i += 15) {
+                if (gameBoard.get(i).getLetterTile() == null && !move.keySet().contains(i)) return false;
+            }
+        }
+        return true;
+
     }
 
+    /**
+     * Removes the letter tiles of the move from the game board.
+     *
+     * @param move the move of play
+     */
     public void removeTiles(Map<Integer, LetterTile> move) {
-
+        for (Integer i : move.keySet()) {
+            gameBoard.get(i).setLetterTile(null);
+        }
     }
 }

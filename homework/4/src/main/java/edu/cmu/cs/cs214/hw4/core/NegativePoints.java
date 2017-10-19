@@ -13,7 +13,9 @@ public class NegativePoints implements SpecialTile {
      */
     @Override
     public void activateFunc(GameBoard board, GameSystem game) {
-
+        int score = board.calculateScore(game.getCurrentMove());
+        Player currentPlayer = game.getCurrentPlayer();
+        currentPlayer.addScore(-score);
     }
 
     /**
