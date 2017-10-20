@@ -1,4 +1,4 @@
-package edu.cmu.cs.cs214.hw4.core;
+package edu.cmu.cs.cs214.hw4.core.gameelements;
 
 import java.io.File;
 import java.io.FileNotFoundException;

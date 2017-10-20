@@ -1,4 +1,8 @@
-package edu.cmu.cs.cs214.hw4.core;
+package edu.cmu.cs.cs214.hw4.core.gameelements;
+
+import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.LetterTile;
+import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.TileBag;
+import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +50,14 @@ public class Player {
         this.rack = new ArrayList<>();
     }
 
+    /**
+     * Gets the player's id.
+     *
+     * @return the player's id
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
      * Gets the current score of the player.
@@ -119,18 +131,15 @@ public class Player {
     }
 
     /**
-     * Sets the number of turns for the player to skip
-     *
-     * @param numOfSkips the number of turns for the player to skip
+     * Reduces the number of skips by 1.
      */
-    public void setNumOfSkips(int numOfSkips) {
-        this.numOfSkips = numOfSkips;
+    public void reduceNumOfSkips() {
+        this.numOfSkips--;
+        if (this.numOfSkips == 0) this.skipTurn = false;
     }
-
 
     /**
      * Draws tiles from the bag to replenish the player's rack to seven tiles.
-     * If there are not enough tiles in the tile bag, the player takes all the remaining tiles.
      *
      * @param tileBag the tile bag to draw tiles
      */
@@ -138,6 +147,7 @@ public class Player {
         List<LetterTile> bag = tileBag.getTileBag();
         int bagSize = bag.size();
         if (rack.size() < 7) {
+            //If there are not enough tiles in the tile bag, the player takes all the remaining tiles.
             if (bagSize < (7 - rack.size())) {
                 rack.addAll(bag);
             }
@@ -203,6 +213,22 @@ public class Player {
             tileInventory.put(tile, num - 1);
         }
         return true;
+    }
+
+    /**
+     * Adds special tiles to the player's tile inventory.
+     *
+     * @param specialTiles the special tiles to be added
+     */
+    public void addSpecialTiles(Map<SpecialTile, Integer> specialTiles) {
+        for (SpecialTile tile : specialTiles.keySet()) {
+            Integer num = tileInventory.get(tile);
+            if (num == null) {
+                tileInventory.put(tile, specialTiles.get(tile));
+            } else {
+                tileInventory.put(tile, num + specialTiles.get(tile));
+            }
+        }
     }
 
     /**

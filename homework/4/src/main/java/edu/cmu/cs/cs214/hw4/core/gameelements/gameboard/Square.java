@@ -1,5 +1,9 @@
-package edu.cmu.cs.cs214.hw4.core;
+package edu.cmu.cs.cs214.hw4.core.gameelements.gameboard;
 
+import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.LetterTile;
+import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTile;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,11 +13,11 @@ public class Square {
     /**
      * the letter tile corresponding to the square (null means no letter tile is on the square)
      */
-    private LetterTile letterTile;
+    private LetterTile letterTile = null;
     /**
      * the special tiles corresponding to the square (null means no special tile is on the square)
      */
-    private List<SpecialTile> specialTiles;
+    private List<SpecialTile> specialTiles = null;
     /**
      * the multiplier represented by the square
      */
@@ -90,6 +94,7 @@ public class Square {
      */
     public boolean addSpecialTile(SpecialTile specialTile) {
         if (this.letterTile != null) return false;
+        if (this.specialTiles == null) this.specialTiles = new ArrayList<>();
         this.specialTiles.add(specialTile);
         return true;
     }
