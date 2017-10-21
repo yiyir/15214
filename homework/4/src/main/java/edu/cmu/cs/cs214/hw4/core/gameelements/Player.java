@@ -4,10 +4,7 @@ import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.LetterTile;
 import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.TileBag;
 import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the player of the scrabble game. There can be 2-4 players in the same game.
@@ -150,9 +147,10 @@ public class Player {
             //If there are not enough tiles in the tile bag, the player takes all the remaining tiles.
             if (bagSize < (7 - rack.size())) {
                 rack.addAll(bag);
-            }
-            for (int i = 0; i < (7 - rack.size()); i++) {
-                rack.add(bag.remove(generateRandomIndex(bagSize)));
+            } else {
+                while (rack.size() != 7) {
+                    rack.add(bag.remove(new Random().nextInt(tileBag.getTileBag().size())));
+                }
             }
         }
     }
@@ -174,27 +172,24 @@ public class Player {
      * Removes the given letter tiles from the player's rack.
      *
      * @param tiles the letter tiles to be removed from the player's rack
-     * @return true if the player has the given letter tiles and the tiles are removed successfully from the rack;
-     * false if the player doesn't have all the given tiles
      */
-    public boolean removeLetterTiles(Map<Integer, LetterTile> tiles) {
-        if (!rack.containsAll(tiles.values())) return false;
-        rack.removeAll(tiles.values());
-        return true;
+    public void removeLetterTiles(Map<Integer, LetterTile> tiles) {
+        for (Integer i : tiles.keySet()) {
+            rack.remove(tiles.get(i));
+        }
     }
 
     /**
      * Removes the given letter tiles from the player's rack.
      *
      * @param tiles the letter tiles to be removed from the player's rack
-     * @return true if the player has the given letter tiles and the tiles are removed successfully from the rack;
-     * false if the player doesn't have all the given tiles
      */
-    public boolean removeLetterTiles(List<LetterTile> tiles) {
-        if (!rack.containsAll(tiles)) return false;
-        rack.removeAll(tiles);
-        return true;
+    public void removeLetterTiles(List<LetterTile> tiles) {
+        for (LetterTile tile : tiles) {
+            rack.remove(tile);
+        }
     }
+
 
     /**
      * Removes the given special tile from the player's tile inventory.
@@ -203,6 +198,7 @@ public class Player {
      * @return true if the player has the given special tile and the tile is removed successfully from the player's tile inventory;
      * false if the player doesn't have the given tile
      */
+
     public boolean removeSpecialTile(SpecialTile tile) {
         Integer num = tileInventory.get(tile);
         if (num == null) {
@@ -230,14 +226,4 @@ public class Player {
             }
         }
     }
-
-    /**
-     * Generates a random index number from 0 to num-1.
-     *
-     * @param num the total number of indices
-     */
-    private int generateRandomIndex(int num) {
-        return (int) (num * Math.random());
-    }
-
 }

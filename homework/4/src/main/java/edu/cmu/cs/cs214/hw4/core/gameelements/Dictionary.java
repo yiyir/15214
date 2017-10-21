@@ -17,10 +17,11 @@ public class Dictionary {
     /**
      * Creates a new dictionary with the given file representing the dictionary.
      *
-     * @param file the given file
      * @throws FileNotFoundException if the file is not found
      */
-    public Dictionary(File file) throws FileNotFoundException {
+    public Dictionary() throws FileNotFoundException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("words.txt").getFile());
         Scanner sc = new Scanner(file);
         while (sc.hasNext()) {
             words.add(sc.next());
@@ -39,13 +40,4 @@ public class Dictionary {
     }
 
 
-
-//    public static void main(String[] args) throws FileNotFoundException {
-//        File file = new File("words.txt");
-//        Dictionary dic = new Dictionary(file);
-//        List<String> words = new ArrayList<>();
-//        words.add("apples");
-//        words.add("abacus");
-//        System.out.println(dic.contains(words));
-//    }
 }

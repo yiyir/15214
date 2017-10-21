@@ -62,14 +62,14 @@ public class GameSystem {
     /**
      * whether the game has ended or not
      */
-    private boolean isGameEnd;
+    private boolean isGameEnd = false;
 
     /**
      * Creates a new game.
      */
     public GameSystem() {
         try {
-            dictionary = new Dictionary(new File("words.txt"));
+            dictionary = new Dictionary();
         } catch (FileNotFoundException e) {
             System.out.println("The dictionary is not found!");
         } finally {
@@ -115,7 +115,6 @@ public class GameSystem {
         return currentMove;
     }
 
-
     /**
      * Sets the order of the game to be the reverse of the previous order.
      */
@@ -133,13 +132,12 @@ public class GameSystem {
     /**
      * Adds a new player to the game.
      *
-     * @param id the player's id
+     * @param player the new player
      * @return whether the player is added successfully
      */
-    public boolean addPlayer(String id) {
+    public boolean addPlayer(Player player) {
         if (players.size() == 4) return false;
-        Player newPlayer = new Player(id);
-        players.offerLast(newPlayer);
+        players.offerLast(player);
         return true;
     }
 
@@ -242,7 +240,7 @@ public class GameSystem {
             if (!gameBoard.isValidLetterTilePlacement(letterTiles, false)) return false;
         }
         // remove the letter tiles from the current player's rack
-        if (!currentPlayer.removeLetterTiles(letterTiles)) return false;
+        currentPlayer.removeLetterTiles(letterTiles);
         // place the letter tiles on the game board
         gameBoard.placeLetterTiles(letterTiles);
         // update the current move
@@ -260,10 +258,9 @@ public class GameSystem {
         List<String> result = new ArrayList<>();
         List<List<Integer>> words = gameBoard.getWords(currentMove);
         for (List<Integer> word : words) {
-            Integer[] array = (Integer[]) word.toArray();
-            Arrays.sort(array);
+            Collections.sort(word);
             StringBuilder sb = new StringBuilder();
-            for (Integer i : array) {
+            for (Integer i : word) {
                 Square square = gameBoard.getGameBoard().get(i);
                 sb.append(square.getLetterTile().getLetter());
             }

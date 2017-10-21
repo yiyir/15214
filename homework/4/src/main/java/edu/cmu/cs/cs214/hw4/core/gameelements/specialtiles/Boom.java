@@ -23,7 +23,9 @@ public class Boom implements SpecialTile {
      */
     @Override
     public void activateFunc(Integer index, GameSystem game) {
+
         GameBoard board = game.getGameBoard();
+        List<List<Integer>> words = board.getWords(game.getCurrentMove());
         // record the square indices where the tiles are removed
         List<Integer> removedTiles = new ArrayList<>();
         int rowIndex = index / 15;
@@ -36,23 +38,20 @@ public class Boom implements SpecialTile {
                 colIndex - 3, colIndex - 2, colIndex - 1, colIndex, colIndex + 1, colIndex + 2, colIndex + 3, colIndex - 2, colIndex - 1, colIndex, colIndex + 1, colIndex + 2,
                 colIndex - 1, colIndex, colIndex + 1, colIndex};
         for (int i = 0; i < 25; i++) {
-            // remove the tiles in a 3-tile radius and put them back in the tile bag
+
             if (row[i] >= 0 && row[i] <= 14 && col[i] >= 0 && col[i] <= 14) {
                 int removedIndex = row[i] * 15 + col[i];
                 removedTiles.add(removedIndex);
-                LetterTile removed = board.removeLetterTile(removedIndex);
-                TileBag bag = game.getTileBag();
-                bag.getTileBag().add(removed);
             }
         }
         // calculate the score to be deducted from the player after the tiles are removed
-        List<List<Integer>> words = board.getWords(game.getCurrentMove());
+
         Map<Integer, LetterTile> move = game.getCurrentMove();
         int totalRemovedScore = 0;
         for (List<Integer> word : words) {
             int multiplier = 1;
             int removedScore = 0;
-            for (Integer i : word) {
+            for (int i : word) {
                 Square square = board.getGameBoard().get(i);
                 if (move.keySet().contains(i)) {
                     if (square.isForWord()) {
@@ -67,7 +66,13 @@ public class Boom implements SpecialTile {
             totalRemovedScore += removedScore * multiplier;
         }
         // deduct the points from the player's score
-        game.getCurrentPlayer().addScore(totalRemovedScore * (-1));
+        game.getCurrentPlayer().addScore(-totalRemovedScore);
+        // remove the tiles in a 3-tile radius and put them back in the tile bag
+        for (int i : removedTiles) {
+            LetterTile removed = board.removeLetterTile(i);
+            TileBag bag = game.getTileBag();
+            bag.getTileBag().add(removed);
+        }
     }
 
     /**
