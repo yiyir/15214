@@ -12,7 +12,7 @@ public class LetterTile {
     /**
      * the letter represented by the letter tile
      */
-    private final char letter;
+    private final Character letter;
 
     /**
      * Creates a new letter tile with the given score value and letter.
@@ -39,7 +39,17 @@ public class LetterTile {
      *
      * @return the letter represented by the letter tile
      */
-    public char getLetter() {
+    public Character getLetter() {
         return letter;
+    }
+
+    /**
+     * Gets the string representation of the letter tile.
+     *
+     * @return the string representation of the letter tile
+     */
+    @Override
+    public String toString() {
+        return letter.toString();
     }
 }

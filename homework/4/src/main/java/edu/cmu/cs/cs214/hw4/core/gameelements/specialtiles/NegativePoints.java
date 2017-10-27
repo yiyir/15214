@@ -1,6 +1,8 @@
 package edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles;
 
-import edu.cmu.cs.cs214.hw4.core.game.GameSystem;
+import edu.cmu.cs.cs214.hw4.core.ScrabbleImpl;
+
+import edu.cmu.cs.cs214.hw4.core.gameelements.gameboard.GameBoard;
 
 /**
  * This class represents the 'Negative-points' special tile.
@@ -14,8 +16,11 @@ public class NegativePoints implements SpecialTile {
      * @param game  the game system of the game
      */
     @Override
-    public void activateFunc(Integer index, GameSystem game) {
-        game.setNegative();
+    public void activateFunc(Integer index, ScrabbleImpl game) {
+        GameBoard board = game.getGameBoard();
+        int score = board.getScoreForNegativeWords(game.getCurrentMove(), index);
+        game.getCurrentPlayer().addScore(score * (-2));
+
 
     }
 

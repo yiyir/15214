@@ -98,4 +98,13 @@ public class Square {
         this.specialTiles.add(specialTile);
         return true;
     }
+
+    @Override
+    public String toString() {
+        if (multiplier == 3 && !isForWord) return "TL";
+        if (multiplier == 3 && isForWord) return "TW";
+        if (multiplier == 2 && !isForWord) return "DL";
+        if (multiplier == 2 && isForWord) return "DW";
+        return "";
+    }
 }

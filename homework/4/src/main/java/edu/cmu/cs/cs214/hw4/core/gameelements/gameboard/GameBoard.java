@@ -44,7 +44,7 @@ public class GameBoard {
      *
      * @return the squares representing the game board
      */
-    public List<Square> getGameBoard() {
+    public List<Square> getSquares() {
         return gameBoard;
     }
 
@@ -88,13 +88,13 @@ public class GameBoard {
             result.add(getHorizontalWord(index));
             for (int i : move.keySet()) {
                 List<Integer> word = getVerticalWord(i);
-                if(word!=null) result.add(getVerticalWord(i));
+                if (word != null) result.add(getVerticalWord(i));
             }
         } else { // if the move is played in a column
             result.add(getVerticalWord(index));
             for (int i : move.keySet()) {
                 List<Integer> word = getHorizontalWord(i);
-                if(word!=null) result.add(word);
+                if (word != null) result.add(word);
             }
         }
         return result;
@@ -185,34 +185,33 @@ public class GameBoard {
     }
 
     /**
-     * Calculates the score for the main word in the move.
+     * Calculates the total original score for the words to be negatively scored.
      *
-     * @param move the given move
-     * @return the score for the main word in the move
+     * @param move  the given move
+     * @param index the index of the square where 'Negative-points' special tile is triggered
+     * @return the total original score for the words to be negatively scored
      */
-    public int getScoreForMainWord(Map<Integer, LetterTile> move) {
-        List<Integer> mainWord;
-        // get the main word of the move
-        List<Integer> indices = new ArrayList<>(move.keySet());
-        Integer index = indices.get(0);
-        if (rowOrCol(move)) {
-            mainWord = getHorizontalWord(index);
-        } else {
-            mainWord = getVerticalWord(index);
-        }
-        int mainWordScore = 0;
-        int multiplier = 1;
-        for (int i : mainWord) {
-            Square square = gameBoard.get(i);
-            if (move.keySet().contains(i)) {
-                if (square.isForWord()) {
-                    multiplier *= square.getMultiplier();
-                } else {
-                    mainWordScore += square.getLetterTile().getPointValue() * square.getMultiplier();
+    public int getScoreForNegativeWords(Map<Integer, LetterTile> move, Integer index) {
+        List<List<Integer>> negativeWords = new ArrayList<>();
+        negativeWords.add(this.getHorizontalWord(index));
+        negativeWords.add(this.getVerticalWord(index));
+        int totalScore = 0;
+        for (List<Integer> word : negativeWords) {
+            int multiplier = 1;
+            int wordScore = 0;
+            for (int i : word) {
+                Square square = gameBoard.get(i);
+                if (move.keySet().contains(i)) {
+                    if (square.isForWord()) {
+                        multiplier *= square.getMultiplier();
+                    } else {
+                        wordScore += square.getLetterTile().getPointValue() * square.getMultiplier();
+                    }
                 }
             }
+            totalScore += wordScore * multiplier;
         }
-        return mainWordScore * multiplier;
+        return totalScore;
 
     }
 

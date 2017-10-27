@@ -3,8 +3,7 @@ package edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles;
 import edu.cmu.cs.cs214.hw4.core.gameelements.gameboard.GameBoard;
 import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.LetterTile;
 import edu.cmu.cs.cs214.hw4.core.gameelements.gameboard.Square;
-import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.TileBag;
-import edu.cmu.cs.cs214.hw4.core.game.GameSystem;
+import edu.cmu.cs.cs214.hw4.core.ScrabbleImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ public class Boom implements SpecialTile {
      * @param game  the game system of the game
      */
     @Override
-    public void activateFunc(Integer index, GameSystem game) {
+    public void activateFunc(Integer index, ScrabbleImpl game) {
 
         GameBoard board = game.getGameBoard();
         List<List<Integer>> words = board.getWords(game.getCurrentMove());
@@ -52,7 +51,7 @@ public class Boom implements SpecialTile {
             int multiplier = 1;
             int removedScore = 0;
             for (int i : word) {
-                Square square = board.getGameBoard().get(i);
+                Square square = board.getSquares().get(i);
                 if (move.keySet().contains(i)) {
                     if (square.isForWord()) {
                         multiplier *= square.getMultiplier();
@@ -67,11 +66,9 @@ public class Boom implements SpecialTile {
         }
         // deduct the points from the player's score
         game.getCurrentPlayer().addScore(-totalRemovedScore);
-        // remove the tiles in a 3-tile radius and put them back in the tile bag
+        // remove the tiles in a 3-tile radius
         for (int i : removedTiles) {
-            LetterTile removed = board.removeLetterTile(i);
-            TileBag bag = game.getTileBag();
-            bag.getTileBag().add(removed);
+            board.removeLetterTile(i);
         }
     }
 

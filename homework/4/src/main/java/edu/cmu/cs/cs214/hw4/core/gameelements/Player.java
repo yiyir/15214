@@ -48,11 +48,13 @@ public class Player {
     }
 
     /**
-     * Gets the player's id.
+     * Gets the string representation of the player.
      *
-     * @return the player's id
+     * @return the string representation of the player
      */
-    public String getId() {
+    @Override
+    public String toString() {
+        if(this==null) return "";
         return id;
     }
 

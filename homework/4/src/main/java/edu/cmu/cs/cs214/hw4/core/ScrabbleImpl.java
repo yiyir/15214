@@ -1,4 +1,4 @@
-package edu.cmu.cs.cs214.hw4.core.game;
+package edu.cmu.cs.cs214.hw4.core;
 
 
 import edu.cmu.cs.cs214.hw4.core.gameelements.*;
@@ -9,7 +9,6 @@ import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.LetterTile;
 import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.TileBag;
 import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTile;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
@@ -18,7 +17,8 @@ import java.util.*;
  * This class represents the game system of the game Scrabble.
  * Each game has 2-4 players, a bag of letter tiles, a dictionary, a game board and several special tiles.
  */
-public class GameSystem {
+public class ScrabbleImpl implements Scrabble {
+    private final List<GameChangeListener> gameChangeListeners = new ArrayList<>();
     /**
      * the bag of letter tiles used in the game
      */
@@ -52,26 +52,19 @@ public class GameSystem {
      */
     private boolean isReverseOrder;
     /**
-     * whether the current main word played should be scored negatively
-     */
-    private boolean isNegative;
-    /**
      * whether the current move is the first move.
      */
     private boolean isFirstMove;
-    /**
-     * whether the game has ended or not
-     */
-    private boolean isGameEnd = false;
+
 
     /**
      * Creates a new game.
      */
-    public GameSystem() {
+    public ScrabbleImpl() {
         try {
             dictionary = new Dictionary();
         } catch (FileNotFoundException e) {
-            System.out.println("The dictionary is not found!");
+            notifyDictionaryNotFound();
         } finally {
             tileBag = new TileBag();
             players = new LinkedList<>();
@@ -79,32 +72,6 @@ public class GameSystem {
         }
     }
 
-    /**
-     * Gets the game board.
-     *
-     * @return the game board
-     */
-    public GameBoard getGameBoard() {
-        return gameBoard;
-    }
-
-    /**
-     * Gets the tile bag.
-     *
-     * @return the tile bag
-     */
-    public TileBag getTileBag() {
-        return tileBag;
-    }
-
-    /**
-     * Gets the current player.
-     *
-     * @return the current player
-     */
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
 
     /**
      * Gets the current move.
@@ -122,39 +89,44 @@ public class GameSystem {
         isReverseOrder = !isReverseOrder;
     }
 
-    /**
-     * Sets the current main word played to be scored negatively.
-     */
-    public void setNegative() {
-        isNegative = true;
+    @Override
+    public GameBoard getGameBoard() {
+        return gameBoard;
     }
 
-    /**
-     * Adds a new player to the game.
-     *
-     * @param player the new player
-     * @return whether the player is added successfully
-     */
+    @Override
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    @Override
+    public Deque<Player> getPlayers() {
+        return players;
+    }
+
+    @Override
+    public void addGameChangeListener(GameChangeListener listener) {
+        this.gameChangeListeners.add(listener);
+    }
+
+    @Override
+    public void removeGameChangeListener(GameChangeListener listener) {
+        this.gameChangeListeners.remove(listener);
+    }
+
+
+    @Override
     public boolean addPlayer(Player player) {
         if (players.size() == 4) return false;
         players.offerLast(player);
         return true;
     }
 
-    /**
-     * Starts a new turn according to the game order.
-     *
-     * @return whether the operation succeeds or not
-     */
+
+    @Override
     public boolean startNewTurn() {
         // fail to start a new turn when there are less than 2 players
         if (players.size() < 2) {
-            return false;
-        }
-        // fail to start a new turn when the game should end, get the winner and print out the winner's name
-        if (isGameEnd) {
-            Player winner = getWinner();
-            System.out.println("Congratulations: " + winner.getId() + "wins!");
             return false;
         }
         // get the first player and mark the first turn
@@ -162,9 +134,15 @@ public class GameSystem {
             currentPlayer = players.pollFirst();
             isFirstMove = true;
         } else {
+            // updates the number of consecutive scoreless turns if necessary
+            if (currentMove == null) {
+                scorelessTurns++;
+            } else {
+                scorelessTurns = 0;
+            }
+            // check if the game should end here
+            checkGameEnd();
             isFirstMove = false;
-            // update the number of scoreless turns if necessary
-            if (currentMove == null) scorelessTurns++;
             // check the playing order of the game
             if (!isReverseOrder) {
                 players.offerLast(currentPlayer);
@@ -188,30 +166,23 @@ public class GameSystem {
             // set the currentMove back to null
             currentMove = null;
         }
+        notifyPlayerChanged();
         // load the new player's rack
         currentPlayer.updateRack(tileBag);
+        notifyRackChanged();
         return true;
     }
 
-
-    /**
-     * Plays the special tile on the specified square of the game board.
-     *
-     * @param i    the index of the square on the game board on which the special tile is to be placed
-     * @param tile the special tile to be played
-     * @return true if the operation succeeds, false if the player doesn't have the special tile
-     */
+    @Override
     public boolean playSpecialTile(Integer i, SpecialTile tile) {
         if (!currentPlayer.removeSpecialTile(tile)) return false;
-        return gameBoard.placeSpecialTile(i, tile);
+        notifySpecialTilesChanged();
+        boolean result = gameBoard.placeSpecialTile(i, tile);
+        notifySquareChanged(i);
+        return result;
     }
 
-    /**
-     * Buys the special tiles from the game and adds them to the current player's tile inventory.
-     *
-     * @param specialTiles the special tiles to be bought
-     * @return true if the operation is successful, false if the player doesn't have enough points to buy the tiles
-     */
+    @Override
     public boolean buySpecialTiles(Map<SpecialTile, Integer> specialTiles) {
         // check if the player has enough points to buy the special tiles
         int money = currentPlayer.getScore();
@@ -221,17 +192,14 @@ public class GameSystem {
         }
         // deduct the points from the player's score
         currentPlayer.setScore(money);
+        notifyScoreChanged();
         // add the special tiles bought to the player's tile inventory
         currentPlayer.addSpecialTiles(specialTiles);
+        notifySpecialTilesChanged();
         return true;
     }
 
-    /**
-     * Plays the letter tiles on the specified squares.
-     *
-     * @param letterTiles the letter tiles to be played
-     * @return whether the operation succeeds or not
-     */
+    @Override
     public boolean playLetterTiles(Map<Integer, LetterTile> letterTiles) {
         // check validation of the move
         if (isFirstMove) {
@@ -241,18 +209,17 @@ public class GameSystem {
         }
         // remove the letter tiles from the current player's rack
         currentPlayer.removeLetterTiles(letterTiles);
+        notifyRackChanged();
         // place the letter tiles on the game board
         gameBoard.placeLetterTiles(letterTiles);
+        notifySquaresChanged(letterTiles.keySet());
         // update the current move
         currentMove = letterTiles;
         return true;
     }
 
-    /**
-     * Challenges the current move. This happens before calculating/updating the score for the current play.
-     *
-     * @param challenger the player who issues the challenge
-     */
+
+    @Override
     public void challenge(Player challenger) {
         // get the words out of the current move
         List<String> result = new ArrayList<>();
@@ -261,7 +228,7 @@ public class GameSystem {
             Collections.sort(word);
             StringBuilder sb = new StringBuilder();
             for (Integer i : word) {
-                Square square = gameBoard.getGameBoard().get(i);
+                Square square = gameBoard.getSquares().get(i);
                 sb.append(square.getLetterTile().getLetter());
             }
             result.add(sb.toString());
@@ -272,19 +239,17 @@ public class GameSystem {
         } else {
             // the current player's move as well as turn is forfeited
             gameBoard.removeTiles(currentMove);
+            notifySquaresChanged(currentMove.keySet());
             currentPlayer.addLetterTiles(currentMove);
+            notifyRackChanged();
             currentMove = null;
             startNewTurn();
         }
     }
 
 
-    /**
-     * Exchanges the selected letter tiles on the player's rack.
-     *
-     * @param tiles the selected letter tiles
-     * @return true if the operation succeeds, false if the selected tiles are not on the player's rack
-     */
+
+    @Override
     public boolean exchangeTiles(List<LetterTile> tiles) {
         // check if the player has the tiles
         if (!currentPlayer.getRack().containsAll(tiles)) return false;
@@ -293,40 +258,31 @@ public class GameSystem {
         currentPlayer.removeLetterTiles(tiles);
         currentPlayer.updateRack(tileBag);
         tileBag.getTileBag().addAll(tiles);
+        notifyRackChanged();
         startNewTurn();
         return true;
     }
 
-    /**
-     * Ends the turn by calculating and updating the current player's score after activating the special tiles.
-     */
-
+    @Override
     public void endTurn() {
         // if the player chooses to end the turn without playing any letter tile
-        if (currentMove == null) {
-            if (scorelessTurns >= 6) isGameEnd = true;
-            startNewTurn();
-            return;
-        }
-        scorelessTurns = 0;
-        // get the original score of the play when no special tile is activated
-        int score = gameBoard.calculateScore(currentMove);
-        // add the original score to the player
-        currentPlayer.addScore(score);
-        // activate the special tiles that are triggered by the play
-        for (Integer i : currentMove.keySet()) {
-            Square square = gameBoard.getGameBoard().get(i);
-            List<SpecialTile> specialTiles = square.getSpecialTiles();
-            if (specialTiles != null) {
-                for (SpecialTile tile : specialTiles) {
-                    tile.activateFunc(i, this);
+        if (currentMove != null) {
+            // get the original score of the play when no special tile is activated
+            int score = gameBoard.calculateScore(currentMove);
+            // add the original score to the player
+            currentPlayer.addScore(score);
+            // activate the special tiles that are triggered by the play
+            for (Integer i : currentMove.keySet()) {
+                Square square = gameBoard.getSquares().get(i);
+                List<SpecialTile> specialTiles = square.getSpecialTiles();
+                if (specialTiles != null) {
+                    for (SpecialTile tile : specialTiles) {
+                        tile.activateFunc(i, this);
+                    }
                 }
             }
+            notifyScoreChanged();
         }
-        // check if the main word of the current move should be scored negatively
-        if (isNegative) currentPlayer.addScore(gameBoard.getScoreForMainWord(currentMove) * (-2));
-        // check if the game should end(i.e. all letters have been drawn and one player uses his or her last letter)
-        if (tileBag.getTileBag().isEmpty() && currentPlayer.getRack().isEmpty()) isGameEnd = true;
         startNewTurn();
     }
 
@@ -361,6 +317,72 @@ public class GameSystem {
             if (player.getScore() > winner.getScore()) winner = player;
         }
         return winner;
+    }
+
+    private void notifyPlayerChanged() {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.currentPlayerChanged(getCurrentPlayer());
+        }
+    }
+
+    private void notifySpecialTilesChanged() {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.specialTilesChanged(currentPlayer.getTileInventory());
+        }
+    }
+
+
+    private void notifyRackChanged() {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.rackChanged(currentPlayer.getRack());
+        }
+    }
+
+    private void notifyScoreChanged() {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.scoreChanged(currentPlayer.getScore());
+        }
+    }
+
+    private void notifySquareChanged(int i) {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.squareChanged(i);
+        }
+    }
+
+    private void notifySquaresChanged(Set<Integer> indices) {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.squaresChanged(indices);
+        }
+    }
+
+    private void notifyDictionaryNotFound() {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.dictionaryNotFound();
+        }
+    }
+
+
+    private void notifyGameEnd(Player winner) {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.gameEnded(winner);
+        }
+    }
+
+    private void checkGameEnd() {
+        if (isGameEnd()) {
+            notifyGameEnd(getWinner());
+        }
+    }
+
+    /**
+     * Checks if the game has ended.
+     */
+    private boolean isGameEnd() {
+        // check if the game should end(i.e. all letters have been drawn and one player uses his or her last letter)
+        if (tileBag.getTileBag().isEmpty() && currentPlayer.getRack().isEmpty()) return true;
+        if (scorelessTurns >= 6) return true;
+        return false;
     }
 
 

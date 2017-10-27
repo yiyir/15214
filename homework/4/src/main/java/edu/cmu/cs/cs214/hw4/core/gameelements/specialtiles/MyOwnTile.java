@@ -1,6 +1,6 @@
 package edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles;
 
-import edu.cmu.cs.cs214.hw4.core.game.GameSystem;
+import edu.cmu.cs.cs214.hw4.core.ScrabbleImpl;
 
 public class MyOwnTile implements SpecialTile {
     /**
@@ -10,7 +10,7 @@ public class MyOwnTile implements SpecialTile {
      * @param game  the game system
      */
     @Override
-    public void activateFunc(Integer index, GameSystem game) {
+    public void activateFunc(Integer index, ScrabbleImpl game) {
         game.getCurrentPlayer().setSkipTurn();
     }
 

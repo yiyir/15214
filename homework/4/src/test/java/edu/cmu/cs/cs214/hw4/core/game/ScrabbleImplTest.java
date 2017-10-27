@@ -1,5 +1,6 @@
 package edu.cmu.cs.cs214.hw4.core.game;
 
+import edu.cmu.cs.cs214.hw4.core.ScrabbleImpl;
 import edu.cmu.cs.cs214.hw4.core.gameelements.Player;
 import edu.cmu.cs.cs214.hw4.core.gameelements.gameboard.Square;
 import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.*;
@@ -13,11 +14,11 @@ import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.*;
 
 
-public class GameSystemTest {
+public class ScrabbleImplTest {
     Player a = new Player("yiyi");
     Player b = new Player("Bob");
     Player c = new Player("cici");
-    private GameSystem game = new GameSystem();
+    private ScrabbleImpl game = new ScrabbleImpl();
     public static final SpecialTile BOOM = new Boom();
     public static final SpecialTile MY_OWN_TILE = new MyOwnTile();
     public static final SpecialTile NEGATIVE_POINTS = new NegativePoints();
@@ -28,10 +29,10 @@ public class GameSystemTest {
     public void startNewTurn() {
         game.addPlayer(a);
         game.addPlayer(b);
-        game.addPlayer(c);
+        game.addPlayer(b);
         assertTrue(game.startNewTurn());
         assertNull(game.getCurrentMove());
-        assertEquals(game.getCurrentPlayer(), a);
+        assertEquals(game.getCurrentPlayer(),a);
         assertEquals(game.getCurrentPlayer().getRack().size(), 7);
 
     }
@@ -44,7 +45,7 @@ public class GameSystemTest {
         assertTrue(game.playSpecialTile(112, BOOM));
         assertTrue(game.playSpecialTile(112, MY_OWN_TILE));
         assertTrue(a.getTileInventory().size() == 0);
-        assertTrue(game.getGameBoard().getGameBoard().get(112).getSpecialTiles().size() == 2);
+        assertTrue(game.getGameBoard().getSquares().get(112).getSpecialTiles().size() == 2);
 
 
     }
@@ -52,20 +53,20 @@ public class GameSystemTest {
     @Test
     public void buySpecialTiles() {
         startNewTurn();
-        a.setScore(50);
+        Player firstPlayer = game.getCurrentPlayer();
+        firstPlayer.setScore(50);
         Map<SpecialTile, Integer> buy = new HashMap<>();
         buy.put(BOOM, 1);
         buy.put(MY_OWN_TILE, 1);
         buy.put(REVERSE_ORDER, 1);
         game.buySpecialTiles(buy);
-        assertNotNull(a.getTileInventory());
-        assertTrue(a.getTileInventory().size() == 3);
+        assertTrue(firstPlayer.getTileInventory().size() == 3);
     }
 
     @Test
     public void playLetterTiles() {
         startNewTurn();
-        List<Square> board = game.getGameBoard().getGameBoard();
+        List<Square> board = game.getGameBoard().getSquares();
         Player firstPlayer = game.getCurrentPlayer();
         Map<Integer, LetterTile> invalidFirstMove = new HashMap<>();
         invalidFirstMove.put(112, firstPlayer.getRack().get(4));

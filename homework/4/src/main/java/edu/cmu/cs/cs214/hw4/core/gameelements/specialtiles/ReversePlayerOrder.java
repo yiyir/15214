@@ -1,6 +1,6 @@
 package edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles;
 
-import edu.cmu.cs.cs214.hw4.core.game.GameSystem;
+import edu.cmu.cs.cs214.hw4.core.ScrabbleImpl;
 
 /**
  * This class represents the 'Reverse-player-order' special tile.
@@ -14,7 +14,7 @@ public class ReversePlayerOrder implements SpecialTile {
      * @param game  the game system of the game
      */
     @Override
-    public void activateFunc(Integer index, GameSystem game) {
+    public void activateFunc(Integer index, ScrabbleImpl game) {
         game.setReverseOrder();
     }
 
