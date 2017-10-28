@@ -1,6 +1,7 @@
 package edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles;
 
 import edu.cmu.cs.cs214.hw4.core.ScrabbleImpl;
+import edu.cmu.cs.cs214.hw4.core.gameelements.Player;
 
 /**
  * This interface represents the special tile.
@@ -27,4 +28,5 @@ public interface SpecialTile {
      * @returns tring representation of the special tile
      */
     String toString();
+
 }

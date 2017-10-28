@@ -4,6 +4,7 @@ package edu.cmu.cs.cs214.hw4.core;
 import edu.cmu.cs.cs214.hw4.core.gameelements.Player;
 import edu.cmu.cs.cs214.hw4.core.gameelements.gameboard.GameBoard;
 import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTile;
+import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTileFactory;
 import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.LetterTile;
 
 import java.util.Deque;
@@ -44,12 +45,25 @@ public interface Scrabble {
     GameBoard getGameBoard();
 
     /**
+     * Gets the special tile store of the game
+     *
+     * @return the special tile store of the game
+     */
+    SpecialTileFactory getSpecialTileStore();
+
+    /**
      * Adds a new player to the game.
      *
      * @param player the new player
-     * @return whether the player is added successfully
      */
     boolean addPlayer(Player player);
+
+    /**
+     * Removes the player from the game.
+     *
+     * @param player the player who wants to leave the game
+     */
+    void removePlayer(Player player);
 
     /**
      * Gets all the players of the game.

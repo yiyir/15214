@@ -33,4 +33,9 @@ public class NegativePoints implements SpecialTile {
     public int getPrice() {
         return 20;
     }
+
+    @Override
+    public String toString() {
+        return "NegativePoints";
+    }
 }

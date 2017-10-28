@@ -9,6 +9,7 @@ public class Main {
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frame.add(new startScrabble(frame));
             frame.pack();
+            frame.setLocation(350, 350);
             frame.setResizable(false);
             frame.setVisible(true);
         });

@@ -21,13 +21,17 @@ public class startScrabble extends JPanel {
      */
     private static final int CHAT_WINDOW_POS_OFFSET = 30;
     /**
-     * The JFrame from which this chat is established.
+     * The JFrame from which this panel is established.
      */
     private JFrame parentFrame;
     /**
      * The ids/names of the players in this game
      */
     private final List<String> ids;
+    /**
+     * The logistics/core corresponding to the gui.
+     */
+    private final Scrabble game = new ScrabbleImpl();
 
     public startScrabble(JFrame frame) {
         this.parentFrame = frame;
@@ -82,12 +86,13 @@ public class startScrabble extends JPanel {
         parentFrame.dispose();
         parentFrame = null;
         Scrabble game = new ScrabbleImpl();
+        for (String id : ids) {
+            game.addPlayer(new Player(id));
+        }
         // Creates a new window for each player.
         int pos = 0;
-        for (String id : ids) {
-            Player player = new Player(id);
-            game.addPlayer(player);
-            JFrame frame = new JFrame("Scrabble Player -- " + id);
+        for (Player player : game.getPlayers()) {
+            JFrame frame = new JFrame("Scrabble Player -- " + player.toString());
             PlayerPanel playerPanel = new PlayerPanel(game, player);
             frame.add(playerPanel);
             frame.addWindowListener(new WindowAdapter() {
@@ -97,8 +102,8 @@ public class startScrabble extends JPanel {
                     int option = JOptionPane.showConfirmDialog(new JFrame(), message);
                     if (option == YES_OPTION) {
                         game.removeGameChangeListener(playerPanel);
-                        super.windowClosing(e);
-                        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                        frame.dispose();
+                        game.removePlayer(player);
                     }
                 }
             });
@@ -109,5 +114,6 @@ public class startScrabble extends JPanel {
             frame.setResizable(true);
             frame.setVisible(true);
         }
+        game.startNewTurn();
     }
 }

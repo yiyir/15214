@@ -23,4 +23,9 @@ public class MyOwnTile implements SpecialTile {
     public int getPrice() {
         return 20;
     }
+
+    @Override
+    public String toString() {
+        return "MyOwnTile";
+    }
 }

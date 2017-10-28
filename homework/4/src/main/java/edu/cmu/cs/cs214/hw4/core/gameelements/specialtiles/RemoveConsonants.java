@@ -51,4 +51,9 @@ public class RemoveConsonants implements SpecialTile {
     public int getPrice() {
         return 30;
     }
+
+    @Override
+    public String toString() {
+        return "RemoveConsonants";
+    }
 }

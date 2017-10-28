@@ -5,6 +5,7 @@ import edu.cmu.cs.cs214.hw4.core.gameelements.*;
 import edu.cmu.cs.cs214.hw4.core.gameelements.Dictionary;
 import edu.cmu.cs.cs214.hw4.core.gameelements.gameboard.GameBoard;
 import edu.cmu.cs.cs214.hw4.core.gameelements.gameboard.Square;
+import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTileFactory;
 import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.LetterTile;
 import edu.cmu.cs.cs214.hw4.core.gameelements.tilebag.TileBag;
 import edu.cmu.cs.cs214.hw4.core.gameelements.specialtiles.SpecialTile;
@@ -31,6 +32,10 @@ public class ScrabbleImpl implements Scrabble {
      * the players of the game
      */
     private final Deque<Player> players;
+    /**
+     * the special tile store of the game
+     */
+    private final SpecialTileFactory specialTileStore;
     /**
      * the dictionary used in the game
      */
@@ -69,6 +74,7 @@ public class ScrabbleImpl implements Scrabble {
             tileBag = new TileBag();
             players = new LinkedList<>();
             gameBoard = new GameBoard();
+            specialTileStore = new SpecialTileFactory();
         }
     }
 
@@ -100,6 +106,11 @@ public class ScrabbleImpl implements Scrabble {
     }
 
     @Override
+    public SpecialTileFactory getSpecialTileStore() {
+        return specialTileStore;
+    }
+
+    @Override
     public Deque<Player> getPlayers() {
         return players;
     }
@@ -117,11 +128,43 @@ public class ScrabbleImpl implements Scrabble {
 
     @Override
     public boolean addPlayer(Player player) {
-        if (players.size() == 4) return false;
-        players.offerLast(player);
-        return true;
+        if (getPlayers().size() == 4) return false;
+        return players.offerLast(player);
     }
 
+    @Override
+    public void removePlayer(Player player) {
+        getPlayers().remove(player);
+        notifyPlayersChanged();
+        if (getPlayers().size() == 1) notifyAllPlayersLeft();
+        if (currentPlayer == player) {
+            if (!isReverseOrder) {
+                currentPlayer = players.pollFirst();
+                // check if the current player has any turns to skip
+                while (currentPlayer.isSkipTurn()) {
+                    currentPlayer.reduceNumOfSkips();
+                    players.offerLast(currentPlayer);
+                    currentPlayer = players.pollFirst();
+                }
+            } else {
+                currentPlayer = players.pollLast();
+                // check if the current player has any turns to skip
+                while (currentPlayer.isSkipTurn()) {
+                    currentPlayer.reduceNumOfSkips();
+                    players.offerFirst(currentPlayer);
+                    currentPlayer = players.pollLast();
+                }
+            }
+            // set the currentMove back to null
+            currentMove = null;
+            notifyPlayerChanged();
+            // load the new player's rack
+            currentPlayer.updateRack(tileBag);
+            notifyRackChanged();
+        }
+
+
+    }
 
     @Override
     public boolean startNewTurn() {
@@ -248,7 +291,6 @@ public class ScrabbleImpl implements Scrabble {
     }
 
 
-
     @Override
     public boolean exchangeTiles(List<LetterTile> tiles) {
         // check if the player has the tiles
@@ -319,9 +361,15 @@ public class ScrabbleImpl implements Scrabble {
         return winner;
     }
 
+    private void notifyPlayersChanged() {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.playersChanged();
+        }
+    }
+
     private void notifyPlayerChanged() {
         for (GameChangeListener listener : gameChangeListeners) {
-            listener.currentPlayerChanged(getCurrentPlayer());
+            listener.currentPlayerChanged();
         }
     }
 
@@ -363,7 +411,13 @@ public class ScrabbleImpl implements Scrabble {
     }
 
 
-    private void notifyGameEnd(Player winner) {
+    private void notifyAllPlayersLeft() {
+        for (GameChangeListener listener : gameChangeListeners) {
+            listener.allPlayersLeft();
+        }
+    }
+
+    private void notifyGameEnded(Player winner) {
         for (GameChangeListener listener : gameChangeListeners) {
             listener.gameEnded(winner);
         }
@@ -371,7 +425,7 @@ public class ScrabbleImpl implements Scrabble {
 
     private void checkGameEnd() {
         if (isGameEnd()) {
-            notifyGameEnd(getWinner());
+            notifyGameEnded(getWinner());
         }
     }
 

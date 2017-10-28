@@ -54,4 +54,8 @@ jacocoTestReport {
         html.destination "${buildDir}/reports/coverage"
     }
 }
+task runApp(type:JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
 
+    main = project.hasProperty("mainClass") ? project.getProperty("mainClass") : "edu.cmu.cs.cs214.hw4.gui.Main"
+}

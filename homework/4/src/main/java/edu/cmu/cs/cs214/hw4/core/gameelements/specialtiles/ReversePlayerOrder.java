@@ -27,4 +27,9 @@ public class ReversePlayerOrder implements SpecialTile {
     public int getPrice() {
         return 10;
     }
+
+    @Override
+    public String toString() {
+        return "ReversePlayerOrder";
+    }
 }

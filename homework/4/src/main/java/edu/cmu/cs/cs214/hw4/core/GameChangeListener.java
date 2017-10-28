@@ -9,12 +9,13 @@ import java.util.Map;
 import java.util.Set;
 
 public interface GameChangeListener {
+    void playersChanged();
+
     /**
      * Called when the current player is changed.
      *
-     * @param player the new current player
      */
-    void currentPlayerChanged(Player player);
+    void currentPlayerChanged();
 
     /**
      * Called when the current player's special tile inventory is changed.
@@ -58,6 +59,10 @@ public interface GameChangeListener {
      */
     void gameEnded(Player winner);
 
+    /**
+     * Called when all players have left the game.
+     */
+    void allPlayersLeft();
 
     /**
      * Called when the dictionary of the game cannot be found.
