@@ -21,12 +21,33 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * This is a sequential program to compute the churn rate for each revision in a Git repository.
+ */
 public class SequentialGitAnalysis {
+    /**
+     * the git repository
+     */
     private Repository repository;
+    /**
+     * the child commits
+     */
     private List<String> childCommits;
+    /**
+     * the parent commits
+     */
     private List<String> parentCommits;
+    /**
+     * the churn rate for the revision
+     */
     private List<Integer> numOfLines;
 
+    /**
+     * Constructor method.
+     *
+     * @param repoDir the path name of the git repo
+     * @throws IOException the repository could not be accessed to configure the rest of the builder's parameters
+     */
     public SequentialGitAnalysis(File repoDir) throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repository = builder.setGitDir(repoDir)
@@ -39,7 +60,14 @@ public class SequentialGitAnalysis {
         numOfLines = new ArrayList<>();
     }
 
-
+    /**
+     * Analyzes the git repository, compute the churn rate for each child-parent revision.
+     *
+     * @throws IOException     a loose object or pack file could not be read;
+     *                         the stream threw an exception while writing to it,
+     *                         or one of the blobs referenced by the DiffEntry could not be read
+     * @throws GitAPIException or subclass thereof when an error occurs
+     */
     public void getDevelopmentHistory() throws IOException, GitAPIException {
         Git git = new Git(repository);
         Iterable<RevCommit> log = git.log().call();
@@ -72,7 +100,7 @@ public class SequentialGitAnalysis {
                         linesDeleted += edit.getEndA() - edit.getBeginA();
                         linesAdded += edit.getEndB() - edit.getBeginB();
                     }
-                    totalLines += linesAdded+linesDeleted;
+                    totalLines += linesAdded + linesDeleted;
                 }
                 numOfLines.add(totalLines);
             }
@@ -80,25 +108,51 @@ public class SequentialGitAnalysis {
         }
     }
 
+    /**
+     * Gets the child commits.
+     *
+     * @return the child commits
+     */
     public List<String> getChildCommits() {
         return childCommits;
     }
 
+    /**
+     * Gets the parent commits.
+     *
+     * @return the parent commits
+     */
     public List<String> getParentCommits() {
         return parentCommits;
     }
 
+    /**
+     * Gets the churn rate.
+     *
+     * @return the churn rate
+     */
     public List<Integer> getNumOfLines() {
         return numOfLines;
     }
 
+    /**
+     * Takes the first command line argument as the git repository path name, creates a new sequential git analysis,
+     * computes and prints out the churn rate for each child-parent revision in a chronological order.
+     *
+     * @param args the command line arguments denoting the path name of the local git repository to be analyzed
+     * @throws IOException     the repository could not be accessed to configure the rest of the builder's parameters;
+     *                         a loose object or pack file could not be read;
+     *                         the stream threw an exception while writing to it,
+     *                         or one of the blobs referenced by the DiffEntry could not be read
+     * @throws GitAPIException or subclass thereof when an error occurs
+     */
     public static void main(String[] args) throws IOException, GitAPIException {
         File repoDir = new File(args[0]);
         SequentialGitAnalysis analysis = new SequentialGitAnalysis(repoDir);
         analysis.getDevelopmentHistory();
-        System.out.println("Having repository: "+repoDir.getPath());
-        for(int i =0;i<analysis.getChildCommits().size();i++){
-            System.out.println(analysis.getChildCommits().get(i)+", "+analysis.getParentCommits().get(i)+": "+analysis.getNumOfLines().get(i));
+        System.out.println("Having repository: " + repoDir.getPath());
+        for (int i = 0; i < analysis.getChildCommits().size(); i++) {
+            System.out.println(analysis.getChildCommits().get(i) + ", " + analysis.getParentCommits().get(i) + ": " + analysis.getNumOfLines().get(i));
         }
     }
 }
