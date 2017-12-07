@@ -78,7 +78,6 @@ public class SequentialGitAnalysis {
         df.setDiffComparator(RawTextComparator.DEFAULT);
         df.setDetectRenames(true);
         while (itr.hasNext()) {
-            System.out.println("enter");
             RevCommit child = itr.next();
             ObjectId head = child.getTree();
             CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
