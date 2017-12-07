@@ -78,6 +78,7 @@ public class SequentialGitAnalysis {
         df.setDiffComparator(RawTextComparator.DEFAULT);
         df.setDetectRenames(true);
         while (itr.hasNext()) {
+            System.out.println("enter");
             RevCommit child = itr.next();
             ObjectId head = child.getTree();
             CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
@@ -147,6 +148,7 @@ public class SequentialGitAnalysis {
      * @throws GitAPIException or subclass thereof when an error occurs
      */
     public static void main(String[] args) throws IOException, GitAPIException {
+        long startTime = System.nanoTime(); // Record the start time for simple benchmarking
         File repoDir = new File(args[0]);
         SequentialGitAnalysis analysis = new SequentialGitAnalysis(repoDir);
         analysis.getDevelopmentHistory();
@@ -154,5 +156,9 @@ public class SequentialGitAnalysis {
         for (int i = 0; i < analysis.getChildCommits().size(); i++) {
             System.out.println(analysis.getChildCommits().get(i) + ", " + analysis.getParentCommits().get(i) + ": " + analysis.getNumOfLines().get(i));
         }
+        // After finishing the previous tasks, print out the time used.
+        double totalTime = (System.nanoTime() - startTime) / 1_000_000_000.0;
+        System.out.printf("It took %.2f seconds to finish the analysis.\n", totalTime);
+        System.exit(0); // Forces background threads to quit, close up all threads
     }
 }
