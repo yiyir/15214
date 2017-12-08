@@ -1,0 +1,9 @@
+In my implementation, I achieved parallelization through multi-threading by implementing the ExecutorService, specifically, the fixedThreadPool. On the other hand, to achieve safety in the face of concurrent writing, I used java.util.concurrent.BlockingQueue along with Future<T> as the return type of my 'Callables', for the sake of synchronization as well as to maintain the original order of the revisions/churn rates. In addition, in terms of concurrent reading, I made defensive copies of the original objects by making the copies final.
+
+In this parallelization, a unit of work means to analyze one single 'child-parent revision', calculate the total number of lines changed(added+deleted), and return the number(churn rate) for that revision. Also, I set up another thread to specifically take care of adding the churn rates to the resulting list in their original sequential order.
+
+I did some experiments and tests by running the program on small and big local git repositories, like the churn-rate-example and my own 15214 git repo. I chose repositories of different sizes to see when and how this parallel program will excel.
+
+My first version of parallelization was not satisfying. I assigned 'one-childCommit-to-multi-parentCommit analysis' as a unit of work, which is not efficient since each thread contains a lot of I/O bound operations. Thus I made some revisions and optimizations by scaling down the amount of work each thread does. Basically I tried to make the multi-threads just focus on the cpu-bound operations, which are merely churn-rate calculations of each revision. That's how I came to the latest version.
+
+I achieved code reuse between my sequential and parallel programs by implementing the template method pattern.
