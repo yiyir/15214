@@ -18,9 +18,11 @@ import org.eclipse.jgit.util.io.DisabledOutputStream;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,103 +77,68 @@ public class ParallelGitAnalysis {
      *                              the stream threw an exception while writing to it,
      *                              or one of the blobs referenced by the DiffEntry could not be read
      * @throws GitAPIException      or subclass thereof when an error occurs
+     * @throws IOException          the repository could not be accessed to configure the rest of the builder's parameters;
+     *                              a loose object or pack file could not be read;
+     *                              the stream threw an exception while writing to it,
+     *                              or one of the blobs referenced by the DiffEntry could not be read
      */
-    public void getDevelopmentHistory() throws InterruptedException, GitAPIException {
-        List<Callable<List<String>>> calls = new ArrayList<>();
+    public void getDevelopmentHistory() throws InterruptedException, GitAPIException, IOException {
+        List<Callable<Integer>> calls = new ArrayList<>();
         Git git = new Git(repository);
-        ExecutorService threadPool = Executors.newFixedThreadPool(16);
-        BlockingQueue<Future<List<String>>> queue = new LinkedBlockingQueue<>();
+        ExecutorService threadPool = Executors.newFixedThreadPool(1);
+        BlockingQueue<Future<Integer>> queue = new LinkedBlockingQueue<>();
         Iterable<RevCommit> log = git.log().call();
         Iterator<RevCommit> itr = log.iterator();
 
+        ObjectReader reader = repository.newObjectReader();
         threadPool.submit(() -> {
             while (true) {
-                List<String> result = queue.take().get();
-//                System.out.println(result.size());
-                int numOfParent = result.size() / 3;
-                for (int i = 0; i < numOfParent; i++) {
-                    childCommits.add(result.get(3 * i));
-                    parentCommits.add(result.get(3 * i + 1));
-                    numOfLines.add(Integer.valueOf(result.get(3 * i + 2)));
-                }
-//                System.out.println(childCommits.size());
+                Integer result = queue.take().get();
+                numOfLines.add(result);
             }
         });
         while (itr.hasNext()) {
-//            System.out.println("enter itr while loop");
             RevCommit child = itr.next();
-
-            Callable<List<String>> newThread = new Callable<List<String>>() {
-                @Override
-                public List<String> call() throws Exception {
-                    final RevCommit childCopy = child;
-                    List<String> result = new ArrayList<>();
-//                System.out.println("enter thread");
-                    DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
-                    df.setRepository(repository);
-                    df.setDiffComparator(RawTextComparator.DEFAULT);
-                    df.setDetectRenames(true);
-                    ObjectReader reader = repository.newObjectReader();
-                    ObjectId head = childCopy.getTree();
-                    CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-                    try {
-                        newTreeIter.reset(reader, head);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    for (RevCommit parent : childCopy.getParents()) {
-//                    System.out.println("enter analyze parent loop");
-//                    threadPool.submit(() -> {
-//                    final RevCommit finalParent = parent;
+            ObjectId head = child.getTree();
+            CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+            newTreeIter.reset(reader, head);
+            for (RevCommit parent : child.getParents()) {
+                childCommits.add(child.getName());
+                parentCommits.add(parent.getName());
+                ObjectId oldHead = parent.getTree();
+                CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
+                oldTreeIter.reset(reader, oldHead);
+                DiffCommand diffCommand = git.diff();
+                List<DiffEntry> diffs = null;
+                diffs = diffCommand.setNewTree(newTreeIter)
+                        .setOldTree(oldTreeIter)
+                        .call();
+                final List<DiffEntry> finalDiffs = Collections.unmodifiableList(diffs);
+                Callable<Integer> newThread = new Callable<Integer>() {
+                    @Override
+                    public Integer call() throws Exception {
+                        DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
+                        df.setRepository(repository);
+                        df.setDiffComparator(RawTextComparator.DEFAULT);
+                        df.setDetectRenames(true);
                         int totalLines = 0;
-                        ObjectId oldHead = parent.getTree();
-                        CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
-                        try {
-                            oldTreeIter.reset(reader, oldHead);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        DiffCommand diffCommand = git.diff();
-                        List<DiffEntry> diffs = null;
-                        try {
-                            diffs = diffCommand.setNewTree(newTreeIter)
-                                    .setOldTree(oldTreeIter)
-                                    .call();
-                        } catch (GitAPIException e) {
-                            e.printStackTrace();
-                        }
-                        for (DiffEntry diff : diffs) {
-//                        System.out.println("enter diff loop");
+                        for (DiffEntry diff : finalDiffs) {
                             int linesAdded = 0;
                             int linesDeleted = 0;
-                            try {
-                                for (Edit edit : df.toFileHeader(diff).toEditList()) {
-                                    linesDeleted += edit.getEndA() - edit.getBeginA();
-                                    linesAdded += edit.getEndB() - edit.getBeginB();
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            for (Edit edit : df.toFileHeader(diff).toEditList()) {
+                                linesDeleted += edit.getEndA() - edit.getBeginA();
+                                linesAdded += edit.getEndB() - edit.getBeginB();
                             }
                             totalLines += linesAdded + linesDeleted;
                         }
-//                        synchronized (this) {
-
-                        result.add(child.getName());
-                        result.add(parent.getName());
-//                    System.out.println(String.valueOf(totalLines));
-                        result.add(String.valueOf(totalLines));
-//                        }
-
+                        return totalLines;
                     }
-//                System.out.println(result.size());
-
-                    return result;
-                }
-            };
-            queue.put(threadPool.submit(newThread));
-            calls.add(newThread);
-            List<Future<List<String>>> futures = threadPool.invokeAll(calls);
+                };
+                queue.put(threadPool.submit(newThread));
+                calls.add(newThread);
+            }
         }
+        List<Future<Integer>> futures = threadPool.invokeAll(calls);
     }
 
     /**
@@ -201,6 +168,7 @@ public class ParallelGitAnalysis {
         return numOfLines;
     }
 
+
     /**
      * Takes the first command line argument as the git repository path name, creates a new sequential git analysis,
      * computes and prints out the churn rate for each child-parent revision in a chronological order.
@@ -213,6 +181,7 @@ public class ParallelGitAnalysis {
      * @throws GitAPIException      or subclass thereof when an error occurs
      * @throws InterruptedException a thread is waiting or sleeping and another thread interrupts it
      */
+
     public static void main(String[] args) throws IOException, GitAPIException, InterruptedException {
         long startTime = System.nanoTime();
         File repoDir = new File(args[0]);
