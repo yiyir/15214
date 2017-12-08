@@ -6,16 +6,16 @@ import org.junit.Test;
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-public class SmallRepoTest {
+public class SmallRepoTestParallel {
     private static final String PATH_NAME = "/Users/yiyiren/churn-rate-example/.git";
-    private SequentialGitAnalysis smallRepoAnalysis;
+    private ParallelGitAnalysis smallRepoAnalysis;
 
 
     @Before
     public void setUp() throws Exception {
-        smallRepoAnalysis = new SequentialGitAnalysis(new File(PATH_NAME));
+        smallRepoAnalysis = new ParallelGitAnalysis(new File(PATH_NAME));
         smallRepoAnalysis.getDevelopmentHistory();
 
     }
