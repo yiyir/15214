@@ -1,8 +1,11 @@
 package edu.cmu.cs.cs214.rec07.gui;
 
 import edu.cmu.cs.cs214.rec07.solver.CryptarithmSolver;
+import edu.cmu.cs.cs214.rec07.solver.TheBestCryptarithmSolver;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Gui interface for CryptarithmSolver.
@@ -48,8 +51,14 @@ public class CryptarithmSolverGui extends JFrame {
 
          */
 
-        // Your code for steps 1-7 goes here.
-
+        super(TITLE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.inputPanel = new InputPanel();
+        this.solutionArea = new JTextArea();
+        this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+        this.add(this.inputPanel);
+        this.add(this.solutionArea);
+        this.pack();
         this.solver = solver;
     }
 
@@ -85,7 +94,16 @@ public class CryptarithmSolverGui extends JFrame {
 
             */
 
-            // Your code for steps 1-4 goes here.
+            this.solveButton = new JButton(SOLVE_BUTTON_TEXT);
+            this.input = new JTextField(PROMPT, INPUT_FIELD_WIDTH);
+            this.solveButton.addActionListener(e -> {
+                String str = input.getText();
+                solutionArea.setText(new TheBestCryptarithmSolver().solve(str).toString());
+            });
+            this.add(input);
+            this.add(solveButton);
+
+
         }
     }
 }

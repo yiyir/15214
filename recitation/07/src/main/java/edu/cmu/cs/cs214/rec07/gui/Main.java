@@ -10,6 +10,8 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
+            CryptarithmSolverGui gui = new CryptarithmSolverGui(new TheBestCryptarithmSolver());
+            gui.setVisible(true);
             /*
                TODO:
 

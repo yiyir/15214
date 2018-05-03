@@ -11,19 +11,16 @@ public class ZeroFinder {
     /**
      * Returns a zero of the specified function using Newton's method with
      * approxZero as the initial estimate.
-     * 
-     * @param fn
-     *            the function whose zero is to be found
-     * @param x
-     *            the independent variable of the function
-     * @param approxZero
-     *            initial approximation for the zero of the function
-     * @param tolerance
-     *            how close to zero f(the returned value) has to be
+     *
+     * @param fn         the function whose zero is to be found
+     * @param x          the independent variable of the function
+     * @param approxZero initial approximation for the zero of the function
+     * @param tolerance  how close to zero f(the returned value) has to be
      * @return a value x for which f(x) is "close to zero"(<= tolerance)
      */
     public static double zero(Expression fn, VariableExpression x, double approxZero, double tolerance) {
         DerivativeExpression df = new DerivativeExpression(fn, x);
+        double oldValue = x.eval();
         double x0 = approxZero;
         x.store(x0);
         double x1 = 0.0;
@@ -32,6 +29,7 @@ public class ZeroFinder {
             x.store(x1);
             x0 = x1;
         }
+        x.store(oldValue);
         return x1;
     }
 }

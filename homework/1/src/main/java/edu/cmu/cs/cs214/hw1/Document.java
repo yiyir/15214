@@ -9,19 +9,19 @@ import java.util.Scanner;
 
 /**
  * 15-214 HW1 Andrew ID: yiyir
- * 
+ *
  * @author Yiyi Ren
  */
 public class Document {
     /**
      * Instance variable url to store the URL string
      */
-    private String url;
+    private final String url;
     /**
      * Instance variable freq using HashMap to store the <word,frequency> pairs
      * of the document
      */
-    private Map<String, Integer> freq = new HashMap<String, Integer>();
+    private final Map<String, Integer> freq = new HashMap<String, Integer>();
     /**
      * Instance variable sum to store the sum of the squares of the frequencies
      */
@@ -29,13 +29,10 @@ public class Document {
 
     /**
      * Constructor: creates a Document object by taking a URL string
-     * 
-     * @param urlString
-     *            input URL string; should be valid and not null
-     * @throws MalformedURLException
-     *             if an unknown protocol is specified
-     * @throws IOException
-     *             if an I/O exception occurs
+     *
+     * @param urlString input URL string; should be valid and not null
+     * @throws MalformedURLException if an unknown protocol is specified
+     * @throws IOException           if an I/O exception occurs
      */
     public Document(String urlString) throws MalformedURLException, IOException {
         this.url = urlString;
@@ -57,9 +54,8 @@ public class Document {
 
     /**
      * Takes a second Document and calculates the cosine similarity between them
-     * 
-     * @param second
-     *            a second Document
+     *
+     * @param second a second Document
      * @return the cosine similarity between the two Documents
      */
     double cosSim(Document second) {

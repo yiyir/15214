@@ -3,6 +3,8 @@ package edu.cmu.cs.cs214.rec12.map;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -25,16 +27,17 @@ public class SimpleHashMap<K, V> {
     private final List<List<Entry<K, V>>> table;
 
     private final int numBuckets;
+    private final Lock lock;
 
     /**
      * Constructs a new hash map with a given number of buckets.
      */
     public SimpleHashMap(int numBuckets) {
+        lock = new ReentrantLock();
         if (numBuckets <= 0) {
             throw new IllegalArgumentException("Illegal number of buckets: "
                     + numBuckets);
         }
-
         this.numBuckets = numBuckets;
         table = new ArrayList<>(this.numBuckets);
         for (int i = 0; i < numBuckets; i++) {
@@ -44,27 +47,27 @@ public class SimpleHashMap<K, V> {
 
     /**
      * Puts a new key-value pair into the map.
-     * 
-     * @param key The key to add to the map.
-     * @param value The value to add to the map for the key.
-     * @return The previous value for the given key, or null 
-     *         if the given key was not previously in the map.
      *
+     * @param key   The key to add to the map.
+     * @param value The value to add to the map for the key.
+     * @return The previous value for the given key, or null
+     * if the given key was not previously in the map.
      */
     public V put(K key, V value) {
         if (key == null)
             throw new NullPointerException("Key can't be null.");
 
-        List<Entry<K,V>> bucket = table.get(hash(key));
-        for (Entry<K, V> e : bucket) {
-            if (e.key.equals(key)) {
-                V result = e.value;
-                e.value = value;
-                return result;
+        List<Entry<K, V>> bucket = table.get(hash(key));
+        synchronized (bucket) {
+            for (Entry<K, V> e : bucket) {
+                if (e.key.equals(key)) {
+                    V result = e.value;
+                    e.value = value;
+                    return result;
+                }
             }
+            bucket.add(new Entry<>(key, value));
         }
-
-        bucket.add(new Entry<>(key, value));
         return null;
     }
 
@@ -75,7 +78,7 @@ public class SimpleHashMap<K, V> {
      * @return The value for the given key, or null if the key is not present.
      */
     public V get(K key) {
-        List<Entry<K,V>> bucket = table.get(hash(key));
+        List<Entry<K, V>> bucket = table.get(hash(key));
         for (Entry<K, V> e : bucket) {
             if (e.key.equals(key)) {
                 return e.value;
@@ -87,7 +90,7 @@ public class SimpleHashMap<K, V> {
     /**
      * Returns a hash code for an object, bound to the
      * number of buckets in the hash table.
-     * 
+     *
      * @param o The object to hash.
      * @return The hash code for o, bound to the number
      * of buckets in the table.

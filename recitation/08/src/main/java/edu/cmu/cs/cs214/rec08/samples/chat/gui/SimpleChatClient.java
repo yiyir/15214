@@ -38,6 +38,9 @@ public class SimpleChatClient extends JPanel {
         final JTextField participantText = new JTextField(20);
 
         JButton participantButton = new JButton("Add participant");
+
+
+
         JPanel participantPanel = new JPanel();
         participantPanel.setLayout(new BorderLayout());
         participantPanel.add(participantLabel, BorderLayout.WEST);

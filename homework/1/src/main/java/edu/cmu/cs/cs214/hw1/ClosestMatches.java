@@ -7,9 +7,8 @@ import java.util.Queue;
 
 /**
  * 15-214 HW1 Andrew ID: yiyir
- * 
- * @author yiyir
  *
+ * @author yiyir
  */
 public final class ClosestMatches {
     /**
@@ -31,14 +30,12 @@ public final class ClosestMatches {
      * URLs: one for each URL and its closest match, with each pair on its own
      * line. Prints a stack trace if any of the URLs are invalid, or if an
      * exception occurs while reading data from the URLs.
-     * 
-     * @param args
-     *            command line input of an arbitrary number of URLs; the
-     *            arguments should not be null and the length of the arguments
-     *            array should be greater than one; the arguments should be
-     *            valid URLs
-     * @throws IOException
-     *             if an I/O exception occurs
+     *
+     * @param args command line input of an arbitrary number of URLs; the
+     *             arguments should not be null and the length of the arguments
+     *             array should be greater than one; the arguments should be
+     *             valid URLs
+     * @throws IOException if an I/O exception occurs
      */
     public static void main(String[] args) throws IOException {
         try {
@@ -69,9 +66,8 @@ public final class ClosestMatches {
     /**
      * Private static Fnested class to implement the Comparator interface and
      * define a PairComparator.
-     * 
-     * @author Yiyi Ren
      *
+     * @author Yiyi Ren
      */
     private static class PairComparator implements Comparator<Pair> {
 
@@ -97,9 +93,8 @@ public final class ClosestMatches {
     /**
      * Private static nested class to store the URL strings of the match pair
      * and their cosine similarity
-     * 
-     * @author Yiyi Ren
      *
+     * @author Yiyi Ren
      */
     private static class Pair {
         /**
@@ -116,11 +111,9 @@ public final class ClosestMatches {
         /**
          * Constructor: creates a Pair object that matches the current object
          * with Document a and cosine similarity sim
-         * 
-         * @param a
-         *            the second Document of the match pair of documents
-         * @param sim
-         *            the cosine similarity between the matched documents
+         *
+         * @param a   the second Document of the match pair of documents
+         * @param sim the cosine similarity between the matched documents
          */
         Pair(Document a, double sim) {
             other = a;

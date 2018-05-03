@@ -11,7 +11,7 @@ import java.util.Map;
  * SolveCryptarithm -- a class that generates and prints all solutions to a crytarithm.
  */
 public class SolveCryptarithm {
-    private static final Integer[] digits = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    private static final Integer[] DIGITS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     /**
      * Generates and prints all solutions to a crytarithm.
@@ -30,10 +30,10 @@ public class SolveCryptarithm {
     }
 
     /**
-     * Gets all subsets of size n of all 10 digits.
+     * Gets all subsets of size n of all 10 DIGITS.
      *
      * @param n the subset size
-     * @return all subsets of size n of all 10 digits.
+     * @return all subsets of size n of all 10 DIGITS.
      */
     private static List<List<Integer>> getSubsets(int n) {
         List<List<Integer>> result = new ArrayList<>();
@@ -44,7 +44,7 @@ public class SolveCryptarithm {
                 int num = bitVec;
                 while (num != 0) {
                     if ((1 & num) == 1) {
-                        subset.add(digits[index]);
+                        subset.add(DIGITS[index]);
                     }
                     index++;
                     num = num >> 1;
@@ -58,7 +58,7 @@ public class SolveCryptarithm {
     /**
      * Gets all the valid solutions for the given Cryptarithm.
      *
-     * @param result all subsets of size n of all 10 digits
+     * @param result all subsets of size n of all 10 DIGITS
      * @param cryp   the given Cryptarithm
      * @param map    the map that stores the <letter, VariableExpression> pair
      * @return a list of all the valid solutions for the given Cryptarithm.

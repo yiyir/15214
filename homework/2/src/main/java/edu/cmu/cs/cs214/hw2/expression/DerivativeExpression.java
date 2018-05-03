@@ -11,7 +11,7 @@ public class DerivativeExpression implements Expression {
      * Class final variable delta to store the value of delta to compute the
      * derivative.
      */
-    private static final double delta = Math.pow(10.0, -9.0);
+    private static final double DELTA = Math.pow(10.0, -9.0);
 
     /**
      * Creates an expression representing the derivative of the specified
@@ -31,8 +31,10 @@ public class DerivativeExpression implements Expression {
     public double eval() {
         double oldVar = independentVar.eval();
         double oldVal = fn.eval();
-        independentVar.store(oldVar + delta);
-        return (fn.eval() - oldVal) / delta;
+        independentVar.store(oldVar + DELTA);
+        double result = (fn.eval() - oldVal) / DELTA;
+        independentVar.store(oldVar );
+        return result;
     }
 
     @Override

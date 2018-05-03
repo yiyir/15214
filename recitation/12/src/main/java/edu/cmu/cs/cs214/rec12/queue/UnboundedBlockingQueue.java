@@ -10,26 +10,35 @@ import net.jcip.annotations.GuardedBy;
  * Modify this class to be thread-safe and be an UnboundedBlockingQueue.
  */
 @ThreadSafe
-public class UnboundedBlockingQueue<E> implements SimpleQueue<E> {
+public class UnboundedBlockingQueue<E> implements SimpleQueue<E>  {
     @GuardedBy("this")
     private Deque<E> queue = new ArrayDeque<>();
 
     public UnboundedBlockingQueue() { }
 
-    public boolean isEmpty() { return queue.isEmpty(); }
+    public synchronized boolean isEmpty() { return queue.isEmpty(); }
 
-    public int size() { return queue.size(); }
+    public synchronized int size() { return queue.size(); }
 
-    public E peek() { return queue.peek(); }
+    public synchronized E peek() { return queue.peek(); }
 
-    public void enqueue(E element) { queue.add(element); }
+    public synchronized void enqueue(E element) {
+        queue.add(element);
+        notifyAll(); // notifyAll() for multiple producer/consumer threads
+    }
 
     /**
      * TODO:  Change this method to block (waiting for an enqueue) rather
      * than throw an exception.  Completing this task may require
      * modifying other methods.
      */
-    public E dequeue() { return queue.remove(); }
+    public synchronized E dequeue () throws InterruptedException{
+        while(queue.isEmpty()) {
+            wait();
+        }
+        E item = queue.remove();
+        return item;
+    }
 
     public String toString() { return queue.toString(); }
 }

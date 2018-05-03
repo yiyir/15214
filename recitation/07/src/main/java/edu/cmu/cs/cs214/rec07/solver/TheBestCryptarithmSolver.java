@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  * The best cryptarithm solver implementation ever!
  * We lied; actually it returns a bogus solution to every cryptarithm.
  */
-public class TheBestCryptarithmSolver implements CryptarithmSolver {
+   public class TheBestCryptarithmSolver implements CryptarithmSolver {
     public List<Map<Character, Integer>> solve(String cryptarithm) {
         Set<Character> characters = new HashSet<>();
         for (char c : cryptarithm.toCharArray()) {

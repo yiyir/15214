@@ -1,12 +1,12 @@
 package edu.cmu.cs.cs214.hw1;
 
+import javax.print.Doc;
 import java.io.IOException;
 
 /**
  * 15-214 HW1 Andrew ID: yiyir
- * 
- * @author Yiyi Ren
  *
+ * @author Yiyi Ren
  */
 public class FindClosestMatch {
     /**
@@ -14,30 +14,30 @@ public class FindClosestMatch {
      * pages have the highest cosine similarity. Prints a stack trace if any of
      * the URLs are invalid, or if an exception occurs while reading data from
      * the URLs.
-     * 
-     * @param args
-     *            command line input of an arbitrary number of URLs; the
-     *            arguments should not be null and the length of the arguments
-     *            array should be greater than one; the arguments should be
-     *            valid URLs
-     * @throws IOException
-     *             if an I/O exception occurs
+     *
+     * @param args command line input of an arbitrary number of URLs; the
+     *             arguments should not be null and the length of the arguments
+     *             array should be greater than one; the arguments should be
+     *             valid URLs
+     * @throws IOException if an I/O exception occurs
      */
     public static void main(String[] args) throws IOException {
         try {
             int numDocs = args.length;
-            Document a = new Document(args[0]);
-            Document b = new Document(args[1]);
+            Document[] docs = new Document[numDocs];
+            for (int i = 0; i < numDocs; i++) {
+                docs[i] = new Document(args[i]);
+            }
+            Document a = docs[0];
+            Document b = docs[1];
             double max = a.cosSim(b);
             for (int i = 0; i < numDocs; i++) {
                 for (int j = i + 1; j < numDocs; j++) {
-                    Document one = new Document(args[i]);
-                    Document two = new Document(args[j]);
-                    double similarity = one.cosSim(two);
+                    double similarity = docs[i].cosSim(docs[j]);
                     if (similarity > max) {
                         max = similarity;
-                        a = one;
-                        b = two;
+                        a = docs[i];
+                        b = docs[j];
                     }
                 }
             }
